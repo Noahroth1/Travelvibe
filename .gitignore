@@ -58,3 +58,9 @@ Desktop.ini
 
 # Optional local overrides
 *.local
+
+# YAML (ignore by default; un-ignore files you commit)
+*.yml
+*.yaml
+!docker-compose.yml
+!docker-compose.yaml
