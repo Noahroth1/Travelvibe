@@ -1,0 +1,58 @@
+.app {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  text-align: left;
+}
+
+.app h1 {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  letter-spacing: -0.02em;
+}
+
+.lede {
+  margin: 0 0 1.75rem;
+  color: color-mix(in srgb, CanvasText 72%, transparent);
+  line-height: 1.55;
+}
+
+.status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 0.75rem;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  background: color-mix(in srgb, CanvasText 6%, Canvas);
+  border: 1px solid color-mix(in srgb, CanvasText 12%, Canvas);
+}
+
+.status-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.75;
+}
+
+.status-pending {
+  font-size: 0.95rem;
+}
+
+.status-ok {
+  font-size: 0.95rem;
+  color: #2e7d32;
+}
+
+@media (prefers-color-scheme: dark) {
+  .status-ok {
+    color: #81c784;
+  }
+}
+
+.status-fail {
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: color-mix(in srgb, CanvasText 78%, transparent);
+}
