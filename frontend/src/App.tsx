@@ -27,16 +27,28 @@ function App() {
   return (
     <main className="app">
       <h1>Travel Vibe</h1>
-      <p className="lede">React + Vite frontend. FastAPI and PostgreSQL are ready to wire up.</p>
-      <section className="status" aria-live="polite">
-        <span className="status-label">API</span>
-        {apiOk === null && <span className="status-pending">checking…</span>}
-        {apiOk === true && <span className="status-ok">connected</span>}
-        {apiOk === false && (
-          <span className="status-fail">
-            not reachable — run the backend on port 8000 (see README)
-          </span>
-        )}
+
+      <p className="lede">
+        Discover your perfect stay
+      </p>
+
+      <div className="search-box">
+        <input
+          type="text"
+          placeholder="Search a city..."
+        />
+
+        <button>
+          Search
+        </button>
+      </div>
+
+      <section className="status">
+        <span className="status-label">API:</span>
+
+        {apiOk === null && <span> checking...</span>}
+        {apiOk === true && <span> connected</span>}
+        {apiOk === false && <span> backend offline</span>}
       </section>
     </main>
   )
