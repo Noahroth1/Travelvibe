@@ -57,9 +57,9 @@ function App() {
 
       <section className="status">
         <span className="status-label">API:</span>
-        {apiOk === null && <span> checking...</span>}
-        {apiOk === true && <span> connected</span>}
-        {apiOk === false && <span> backend offline</span>}
+        {apiOk === null && <span className="status-pending"> checking...</span>}
+        {apiOk === true && <span className="status-ok"> connected</span>}
+        {apiOk === false && <span className="status-fail"> backend offline</span>}
       </section>
     </div>
   )
