@@ -25,32 +25,43 @@ function App() {
   }, [])
 
   return (
-    <main className="app">
-      <h1>Travel Vibe</h1>
+    <div className="app-container">
+      <nav className="navbar">
+        <div className="navbar-brand">Travel Vibe</div>
+        <ul className="navbar-menu">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#explore">Explore</a></li>
+          <li><a href="#trips">My Trips</a></li>
+          <li><a href="#profile">Profile</a></li>
+        </ul>
+      </nav>
 
-      <p className="lede">
-        Discover your perfect stay
-      </p>
+      <main className="app">
+        <h1>Travel Vibe</h1>
 
-      <div className="search-box">
-        <input
-          type="text"
-          placeholder="Search a city..."
-        />
+        <p className="lede">
+          Discover your perfect stay
+        </p>
 
-        <button>
-          Search
-        </button>
-      </div>
+        <div className="search-box">
+          <input
+            type="text"
+            placeholder="Search a city..."
+          />
+
+          <button>
+            Search
+          </button>
+        </div>
+      </main>
 
       <section className="status">
         <span className="status-label">API:</span>
-
         {apiOk === null && <span> checking...</span>}
         {apiOk === true && <span> connected</span>}
         {apiOk === false && <span> backend offline</span>}
       </section>
-    </main>
+    </div>
   )
 }
 
