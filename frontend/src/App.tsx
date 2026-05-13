@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import './App.css'
+import jungleHome from "./assets/jungleHome.jpg";
 
 const apiBase = import.meta.env.VITE_API_URL ?? ''
 
@@ -37,11 +38,19 @@ function App() {
       </nav>
 
       <main className="app">
-        <h1>Travel Vibe</h1>
+        <div className='hero-section'>
+          <div className='hero-text'>
+            <h1>Travel Vibe</h1>
 
-        <p className="lede">
-          Discover your perfect stay
-        </p>
+            <p className="lede">
+              Discover your perfect stay
+            </p>
+          </div>
+
+          <div className='front-image'>
+            <img src={jungleHome} alt="Tropical destination" />
+          </div>
+        </div>
 
         <div className="search-box">
           <input

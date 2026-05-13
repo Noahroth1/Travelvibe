@@ -1,3 +1,8 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 .app-container {
   display: flex;
   flex-direction: column;
@@ -66,6 +71,7 @@
   flex-direction: column;
   flex: 1;
   width: 100%;
+  box-sizing: border-box;
 }
 
 /* body {
@@ -127,6 +133,33 @@
   font-size: 0.95rem;
   font-weight: 600;
   color: #ef4444;
+}
+
+.hero-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 3rem;
+  width: 100%;
+  margin-bottom: 3rem;
+}
+
+.hero-text {
+  flex: 1;
+}
+
+.front-image {
+  flex: 1;
+  max-width: 500px;
+  overflow: hidden;
+  border-radius: 20px;
+}
+
+.front-image img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  display: block;
 }
 
 .search-box {
