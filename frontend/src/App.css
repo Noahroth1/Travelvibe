@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 100%;
+  min-height: 100vh;
   background-color: #E3BC9A;
 }
 
@@ -84,8 +84,9 @@
   margin: 0 0 2.5rem;
   color: rgba(0, 0, 0, 0.7);
   line-height: 1.6;
-  font-size: 1.1rem;
-  font-weight: 300;
+  font-size: 1.3rem;
+  font-style: italic;
+  font-weight: 400;
 }
 
 .status {
@@ -132,6 +133,7 @@
   display: flex;
   gap: 1rem;
   margin-bottom: 2rem;
+
 }
 
 .search-box input {
@@ -140,14 +142,14 @@
   font-size: 1rem;
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.95);
-  color: #333;
+  background: oklch(90.322% 0.05515 85.05 / 0.774);
+  color: #292929;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 5px 15px rgba(255, 255, 255, 0.356);
 }
 
 .search-box input::placeholder {
-  color: #999;
+  color: #999999;
 }
 
 .search-box input:focus {
