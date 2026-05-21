@@ -7,6 +7,25 @@ const apiBase = import.meta.env.VITE_API_URL ?? ''
 function App() {
   const [apiOk, setApiOk] = useState<boolean | null>(null)
 
+  const [search, setSearch] = useState("")
+
+  type City = {
+    name: string
+    country: string
+  }
+  const [results, setResults] = useState<City[]>([])
+
+
+
+async function handleSearch() {
+  const res = await fetch(`${apiBase}/api/cities?search=${search}`)
+  const data = await res.json()
+  setResults(data)
+}
+
+
+
+
   useEffect(() => {
     let cancelled = false
     fetch(`${apiBase}/api/health`)
@@ -56,11 +75,20 @@ function App() {
           <input
             type="text"
             placeholder="Search a city..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
           />
 
-          <button>
+          <button onClick={handleSearch}>
             Search
           </button>
+        </div>
+        <div className="results">
+          {results.map((city) => (
+            <p key={`${city.name}-${city.country}`}>
+              {city.name}, {city.country}
+            </p>
+          ))}
         </div>
       </main>
 

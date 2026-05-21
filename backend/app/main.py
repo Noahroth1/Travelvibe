@@ -1,5 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import geonamescache
+
+gc = geonamescache.GeonamesCache()
+cities = gc.get_cities()
+
 
 from app.config import settings
 
@@ -15,6 +20,22 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.get("/api/cities")
+def search_cities(search: str =""):
+    if not search.strip():
+        return []
+        
+    results = []
+
+    for city in cities.values():
+        if search.lower() in city["name"].lower():
+            results.append({
+                "name": city["name"],
+                "country": city["countrycode"]
+            })
+    return results[:20]
+
 
 
 @app.get("/api/health")
