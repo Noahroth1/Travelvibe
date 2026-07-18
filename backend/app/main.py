@@ -1,14 +1,17 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import geonamescache
 
-gc = geonamescache.GeonamesCache()
-cities = gc.get_cities()
-
-
+from app.routes.cities import router as cities_router
+from app.routes.destinations import router as destinations_router
 from app.config import settings
+from app.routes.trips import router as trips_router
+
+from app.database import Base, engine
+from app import models
 
 app = FastAPI(title="Travel Vibe API", version="0.1.0")
+
+Base.metadata.create_all(bind=engine)
 
 app.add_middleware(
     CORSMiddleware,
@@ -21,20 +24,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/api/cities")
-def search_cities(search: str =""):
-    if not search.strip():
-        return []
-        
-    results = []
+app.include_router(cities_router)
+app.include_router(destinations_router)
+app.include_router(trips_router)
 
-    for city in cities.values():
-        if search.lower() in city["name"].lower():
-            results.append({
-                "name": city["name"],
-                "country": city["countrycode"]
-            })
-    return results[:20]
 
 
 

@@ -1,0 +1,859 @@
+{
+  "Amsterdam": {
+    "best_time": "Apr – May, Sep – Oct",
+    "visit_duration": "3–4 days",
+    "budget_level": "$$$",
+    "vibes": [
+      "City Break",
+      "Culture"
+    ],
+    "neighbourhood_tips": {
+      "Jordaan": [
+        "Winkel 43 for the apple pie — eat it warm with cream outside on the canal",
+        "Anne Frank House tickets sell out 2+ months ahead; book the moment you know your dates"
+      ],
+      "De Pijp": [
+        "Saturday Albert Cuyp Market for street food — best in the city",
+        "Brouwerij 't IJ craft brewery is in an actual working windmill"
+      ],
+      "Centrum": [
+        "Walk through the Red Light District once — don't photograph the workers",
+        "De Drie Fleschjes brown café on Gravenstraat for Dutch jenever — over 300 years old"
+      ]
+    }
+  },
+  "Bali": {
+    "best_time": "Apr – Oct",
+    "visit_duration": "7–14 days",
+    "budget_level": "$$",
+    "vibes": [
+      "Beach",
+      "Culture",
+      "Adventure"
+    ],
+    "neighbourhood_tips": {
+      "Ubud": [
+        "Walk Tegallalang rice terraces before 8am — after that it's tour groups",
+        "Avoid staying on Monkey Forest Road itself — too loud at night"
+      ],
+      "Seminyak": [
+        "Merah Putih restaurant for a proper Balinese meal in a beautiful space",
+        "The beach faces west — sunset here is worth doing once"
+      ],
+      "Canggu": [
+        "Old Man's beach bar is the social hub, good for meeting people",
+        "Rent a motorbike rather than taxis — it's how everyone gets around"
+      ]
+    }
+  },
+  "Bangkok": {
+    "best_time": "Nov – Feb",
+    "visit_duration": "4–7 days",
+    "budget_level": "$",
+    "vibes": [
+      "City Break",
+      "Food",
+      "Culture"
+    ],
+    "neighbourhood_tips": {
+      "Sukhumvit": [
+        "Terminal 21 mall food court for cheap, actually good food — ignore the shopping",
+        "Thonglor and Ekkamai (BTS stops past Asok) are where the real Bangkok nightlife is"
+      ],
+      "Riverside": [
+        "Take the Chao Phraya Express boat everywhere — faster than a taxi and a quarter of the price",
+        "Wat Pho is better than the Grand Palace — fewer crowds, more interesting, real monks"
+      ],
+      "Chatuchak": [
+        "Go Saturday or Sunday morning — by midday it's too hot to function",
+        "Section 2–3 for vintage clothing, section 8–9 for antiques"
+      ]
+    }
+  },
+  "Barcelona": {
+    "best_time": "May – Jun, Sep – Oct",
+    "visit_duration": "4–6 days",
+    "budget_level": "$$",
+    "vibes": [
+      "Beach",
+      "City Break",
+      "Food",
+      "Culture"
+    ],
+    "neighbourhood_tips": {
+      "Eixample": [
+        "Cervecería Catalana on Mallorca Street for the best pintxos in the city",
+        "Book Sagrada Família weeks ahead — the ticket queue is not something you want to experience"
+      ],
+      "Gràcia": [
+        "Plaça del Sol for evening aperitivo — sit on the steps with locals",
+        "The Gràcia Festival in August turns the entire neighbourhood into a street party"
+      ],
+      "Barceloneta": [
+        "El Vaso de Oro — tiny standing bar on Carrer de Balboa. Order the beer and anything fried.",
+        "Get there by 10am in summer. By 11am the beach is a wall-to-wall crowd."
+      ]
+    }
+  },
+  "Budapest": {
+    "best_time": "Apr – Jun, Sep – Oct",
+    "visit_duration": "3–5 days",
+    "budget_level": "$",
+    "vibes": [
+      "City Break",
+      "Culture",
+      "Food"
+    ],
+    "neighbourhood_tips": {
+      "District VII (Jewish Quarter)": [
+        "Szimpla Kert is the original ruin bar and still the best — go on Sunday for the farmers market inside",
+        "Kadár étkezde on Klauzál Square for authentic Jewish-Hungarian lunch — no dinner service, cash only"
+      ],
+      "Buda Castle District": [
+        "Visit the castle on a Monday when most museums in Pest are closed",
+        "The funicular up from Clark Ádám Square costs about $5 — not necessary but a nice way up"
+      ],
+      "District IX (Ferencváros)": [
+        "Bálna Budapest cultural centre for views over the Danube — go for the terrace, skip the restaurant",
+        "Hold Utca Market Hall for the freshest produce with far fewer tourists than the Great Market Hall"
+      ]
+    }
+  },
+  "Buenos Aires": {
+    "best_time": "Mar – May, Sep – Nov",
+    "visit_duration": "7–14 days",
+    "budget_level": "$$",
+    "vibes": [
+      "City Break",
+      "Food",
+      "Culture"
+    ],
+    "neighbourhood_tips": {
+      "Palermo": [
+        "Don Julio parrilla for steak — arrive when it opens at noon to avoid the 2-hour queue",
+        "Rent a bike from the Palermo Chico cycle stations for the parks"
+      ],
+      "San Telmo": [
+        "Sunday Feria de San Telmo market — go early before 11am",
+        "Bar Sur on Estados Unidos for tango — small, authentic, not a show for tourists"
+      ],
+      "Recoleta": [
+        "The cemetery is free and takes 2 hours to walk properly — Evita's tomb is well-signposted",
+        "La Biela café across from the cemetery has been serving coffee for 70+ years"
+      ]
+    }
+  },
+  "Cape Town": {
+    "best_time": "Nov – Mar",
+    "visit_duration": "5–8 days",
+    "budget_level": "$$",
+    "vibes": [
+      "Adventure",
+      "Beach",
+      "Culture"
+    ],
+    "neighbourhood_tips": {
+      "City Bowl": [
+        "Truth Coffee Brewing on Buitenkant St — extreme coffee obsessives, excellent",
+        "Walk up Lion's Head at sunrise — 2 hours, no guide needed, views that rival Table Mountain"
+      ],
+      "De Waterkant": [
+        "Biscuit Mill in Woodstock (10 mins away) for the Saturday market — the city's best food market",
+        "The Waterfront is the tourist thing; De Waterkant is where Cape Town actually eats and drinks"
+      ],
+      "Sea Point": [
+        "Olympic Pool at Sea Point Pavilion — 50m outdoor pool on the Atlantic for about $3",
+        "La Perla on Beach Road for calamari and wine on the terrace — been there since 1952"
+      ]
+    }
+  },
+  "Cartagena": {
+    "best_time": "Dec – Apr",
+    "visit_duration": "3–5 days",
+    "budget_level": "$",
+    "vibes": [
+      "Beach",
+      "Culture",
+      "City Break"
+    ],
+    "neighbourhood_tips": {
+      "Ciudad Amurallada": [
+        "La Cevichería for ceviche — small, book ahead, the best in the city by some distance",
+        "Walk the walls at sunset: start from Baluarte de San Francisco Javier and walk the full circuit"
+      ],
+      "Getsemaní": [
+        "El Santísimo for cocktails — the neighbourhood's best bar, always full after 9pm",
+        "La Movida street food from vendors in Parque Getsemaní after 7pm — cheaper and better than most restaurants"
+      ],
+      "Bocagrande": [
+        "Skip it unless you specifically want a beach resort vibe far from the city's character",
+        "If you do go, the beach at Laguito is better than the main Bocagrande strip"
+      ]
+    }
+  },
+  "Chiang Mai": {
+    "best_time": "Nov – Feb",
+    "visit_duration": "5–14 days",
+    "budget_level": "$",
+    "vibes": [
+      "Culture",
+      "Adventure",
+      "Food"
+    ],
+    "neighbourhood_tips": {
+      "Old City": [
+        "Warorot Market (Kad Luang) for local produce and cheap textiles — better value than the Night Bazaar",
+        "A cooking class here is worth half a day — pick one that visits the market first"
+      ],
+      "Nimman": [
+        "Ristr8to espresso bar for the coffee — obsessive about quality, small menu",
+        "Maya Mall rooftop at sunset before hitting the bars on the lower floors"
+      ],
+      "Riverside": [
+        "Long boat tours along the Ping River run until dark and cost about $3",
+        "The Good View restaurant — order the sai ua (northern sausage)"
+      ]
+    }
+  },
+  "Dubai": {
+    "best_time": "Nov – Mar",
+    "visit_duration": "4–6 days",
+    "budget_level": "$$$",
+    "vibes": [
+      "Beach",
+      "City Break",
+      "Adventure"
+    ],
+    "neighbourhood_tips": {
+      "Downtown": [
+        "Book Burj Khalifa observation deck online in advance — the in-person queue is hours long",
+        "Dubai Fountain show is free and runs every 30 minutes after 6pm"
+      ],
+      "Jumeirah Beach": [
+        "Public beach at JBR Walk is free — no need to pay for a hotel beach",
+        "Walk The Walk outdoor mall for evening dining — cooler than going inside"
+      ],
+      "Al Fahidi": [
+        "The Dubai Museum is one of the cheapest and best in the city",
+        "Take an Abra (wooden boat) across the Creek for 1 AED — one of the best things in Dubai"
+      ]
+    }
+  },
+  "Hanoi": {
+    "best_time": "Oct – Apr",
+    "visit_duration": "3–5 days",
+    "budget_level": "$",
+    "vibes": [
+      "City Break",
+      "Culture",
+      "Food",
+      "Adventure"
+    ],
+    "neighbourhood_tips": {
+      "Old Quarter": [
+        "Bún chả at Bún Chả Hương Liên — the place Obama ate. It's genuinely worth it.",
+        "Street addresses in the Old Quarter are often wrong — navigate by landmark and phone"
+      ],
+      "French Quarter": [
+        "Long Train Street — coffee bars appeared for the spectacle of trains passing 30cm from tables",
+        "KOTO restaurant for Vietnamese food with a social enterprise element — good cause, better food"
+      ],
+      "Tay Ho (West Lake)": [
+        "Cafe Giang on Nguyen Huu Huan for egg coffee — invented here in the 1940s",
+        "Cycle around the lake in early morning before the city wakes up"
+      ]
+    }
+  },
+  "Hoi An": {
+    "best_time": "Feb – Apr, Aug – Sep",
+    "visit_duration": "3–5 days",
+    "budget_level": "$",
+    "vibes": [
+      "Beach",
+      "Culture",
+      "Food"
+    ],
+    "neighbourhood_tips": {
+      "Ancient Town": [
+        "Go at dawn — by 9am it's shoulder-to-shoulder. The lanterns are lit regardless of the hour.",
+        "Get measured for custom clothing on Day 1 — 24-hour turnaround but you'll want fitting time"
+      ],
+      "An Bang Beach": [
+        "Soul Kitchen beach club for sunset — better food and more relaxed than the Ancient Town restaurants",
+        "Bike from the Ancient Town in 20 minutes along the river road"
+      ],
+      "Cam Nam Island": [
+        "Cross the footbridge at the south end of the Ancient Town — 5-minute walk to a completely different world",
+        "Morning market on the island runs until 8am — some of the cheapest local food in the area"
+      ]
+    }
+  },
+  "Kotor": {
+    "best_time": "May – Sep",
+    "visit_duration": "3–5 days",
+    "budget_level": "$",
+    "vibes": [
+      "Adventure",
+      "Beach",
+      "Culture"
+    ],
+    "neighbourhood_tips": {
+      "Stari Grad (Old Town)": [
+        "Walk the fortress walls in the early morning — 1,300 steps but the views are worth every one",
+        "Konoba Cattaro on Trg od Salate for grilled fish — inside the walls, no tourist markup"
+      ],
+      "Dobrota": [
+        "Stari Mlini restaurant right on the water — one of the best meals in Montenegro for reasonable money",
+        "Rent a car or scooter — the bay road north toward Perast is one of the most beautiful drives in the Adriatic"
+      ],
+      "Prčanj": [
+        "Gospa od Anđela church dates to 1420 — almost never has visitors despite being remarkable",
+        "Swim from the rocks below the main road — clear water and usually empty in early morning"
+      ]
+    }
+  },
+  "Kyoto": {
+    "best_time": "Mar – May, Oct – Nov",
+    "visit_duration": "3–5 days",
+    "budget_level": "$$",
+    "vibes": [
+      "Culture",
+      "City Break"
+    ],
+    "neighbourhood_tips": {
+      "Higashiyama": [
+        "Most temples charge ¥500–700 entry — budget that into the day",
+        "Walk the Philosopher's Path north to south in cherry blossom season — first week of April"
+      ],
+      "Gion": [
+        "Hanamikoji Street on a Tuesday or Wednesday evening — geisha visible around 6pm",
+        "Don't photograph geisha without permission or try to stop them for photos"
+      ],
+      "Arashiyama": [
+        "Bamboo Grove is best at 7am before tour groups arrive. After 9am it's crowded regardless.",
+        "Tenryu-ji garden is worth the extra ¥500 for the sub-garden — one of the best in Japan"
+      ]
+    }
+  },
+  "Lima": {
+    "best_time": "Dec – Apr",
+    "visit_duration": "3–5 days",
+    "budget_level": "$",
+    "vibes": [
+      "City Break",
+      "Culture",
+      "Food"
+    ],
+    "neighbourhood_tips": {
+      "Barranco": [
+        "Central restaurant (usually on the world's best restaurant lists) — book months ahead",
+        "La Noche bar on Bolognesi Street for live music after 10pm — the neighbourhood's institution"
+      ],
+      "Miraflores": [
+        "Huaca Pucllana — a real Inca pyramid in the middle of a suburb, lit up at night",
+        "Larcomar mall is worth visiting for the Pacific cliff views — the mall itself is irrelevant"
+      ],
+      "Surquillo": [
+        "Mercado N°1 de Surquillo: buy ceviche ingredients from the same stalls the chefs use",
+        "Isolina on Av. San Martín for criollo cooking — less glamorous than Central, just as good"
+      ]
+    }
+  },
+  "Lisbon": {
+    "best_time": "Mar – May, Sep – Nov",
+    "visit_duration": "4–6 days",
+    "budget_level": "$$",
+    "vibes": [
+      "City Break",
+      "Culture",
+      "Food"
+    ],
+    "neighbourhood_tips": {
+      "Alfama": [
+        "Take tram 28 through — the whole route costs €3 and is the best tour of the city",
+        "Fado at Tasca do Chico: small, authentic, book weeks ahead"
+      ],
+      "Bairro Alto": [
+        "Cervejaria da Trindade for craft beer in a 13th-century convent — one of the strangest and best bars in Portugal",
+        "Eat before 10pm if you want a seat without queuing"
+      ],
+      "Belém": [
+        "Pastéis de Belém: the original, the recipe is secret, the queue moves fast — order six",
+        "Jerónimos Monastery is free on Sunday mornings before 2pm"
+      ]
+    }
+  },
+  "Machu Picchu": {
+    "best_time": "May – Sep",
+    "visit_duration": "3–5 days",
+    "budget_level": "$$",
+    "vibes": [
+      "Adventure",
+      "Culture"
+    ],
+    "neighbourhood_tips": {
+      "Aguas Calientes": [
+        "Book the bus to the ruins in advance — the 4am queue is long enough without waiting for tickets",
+        "Train from Cusco to here is the experience; don't take the bus option"
+      ],
+      "Inca Trail": [
+        "Permits sell out months in advance — book before you book your flights",
+        "Day 2 is the hardest. Day 3 through the Sun Gate is the payoff."
+      ],
+      "Cusco": [
+        "Spend at least 2 nights acclimatising before attempting altitude hikes",
+        "San Pedro Market is for locals; Mercado Central is for tourists — both worth visiting"
+      ]
+    }
+  },
+  "Medellín": {
+    "best_time": "Dec – Mar, Jul – Aug",
+    "visit_duration": "5–10 days",
+    "budget_level": "$",
+    "vibes": [
+      "City Break",
+      "Culture",
+      "Adventure"
+    ],
+    "neighbourhood_tips": {
+      "El Poblado": [
+        "Pergamino for the best coffee in the city — Colombian beans done properly",
+        "Parque Lleras fills after 10pm — the surrounding streets have better bars with fewer tourists"
+      ],
+      "Laureles": [
+        "Better local food and about 30% cheaper than El Poblado for accommodation",
+        "Ruta N area for coworking and speciality coffee if you're working remotely"
+      ],
+      "La Candelaria": [
+        "Take the Metrocable to Comunas 13 for street art — go with a guide, not solo",
+        "Plaza Botero has the famous Botero sculptures and is completely free"
+      ]
+    }
+  },
+  "Mexico City": {
+    "best_time": "Mar – May, Oct – Dec",
+    "visit_duration": "5–8 days",
+    "budget_level": "$",
+    "vibes": [
+      "City Break",
+      "Food",
+      "Culture"
+    ],
+    "neighbourhood_tips": {
+      "Roma Norte": [
+        "Contramar for fish — queue or book, do not skip it",
+        "Walk Álvaro Obregón avenue in the evening for the best people watching and street food"
+      ],
+      "Condesa": [
+        "Parque México is the social hub — sit, eat, watch people walk their dogs",
+        "El Parnita for weekend brunch — local crowd, no tourists, excellent mezcal selection"
+      ],
+      "Centro Histórico": [
+        "Palacio de Bellas Artes free entry Sunday mornings — Diego Rivera murals inside worth seeing alone",
+        "Café de Tacuba on Tacuba Street — founded 1912, still using the original recipes"
+      ]
+    }
+  },
+  "New York": {
+    "best_time": "Sep – Nov, Mar – May",
+    "visit_duration": "3–5 days",
+    "budget_level": "$$$",
+    "vibes": [
+      "City Break",
+      "Food",
+      "Culture"
+    ],
+    "neighbourhood_tips": {
+      "Midtown": [
+        "Stay here if you need to — but eat elsewhere. Walk to Hell's Kitchen for real food",
+        "The High Line is most enjoyable 7–9am before it fills up"
+      ],
+      "Williamsburg": [
+        "Take the L train from Manhattan — 15 minutes and a completely different city",
+        "Walk north toward Greenpoint from Bedford Ave for fewer tourists"
+      ],
+      "Lower East Side": [
+        "Russ & Daughters on Houston St for bagels — the original, not the cafe version",
+        "Most bars don't get going until midnight. Plan accordingly."
+      ]
+    }
+  },
+  "Oaxaca": {
+    "best_time": "Oct – Apr",
+    "visit_duration": "5–8 days",
+    "budget_level": "$",
+    "vibes": [
+      "Food",
+      "Culture",
+      "Adventure"
+    ],
+    "neighbourhood_tips": {
+      "Centro Histórico": [
+        "Mercado 20 de Noviembre for tlayudas and memelas — eat at the market, not the surrounding restaurants",
+        "Museo de las Culturas de Oaxaca inside the Santo Domingo complex is free and genuinely excellent"
+      ],
+      "Jalatlaco": [
+        "Casa Oaxaca restaurant — book ahead and eat on the terrace",
+        "Best visited at 7am before tour groups arrive from the hotels"
+      ],
+      "Xochimilco": [
+        "El Pochote organic market on Fridays for the best produce in the city",
+        "Local mezcal bars here charge local prices — half what you'd pay in Centro"
+      ]
+    }
+  },
+  "Paris": {
+    "best_time": "Apr – Jun, Sep – Nov",
+    "visit_duration": "3–5 days",
+    "budget_level": "$$$",
+    "vibes": [
+      "City Break",
+      "Culture",
+      "Food"
+    ],
+    "neighbourhood_tips": {
+      "Le Marais": [
+        "L'As du Fallafel on Rue des Rosiers is the real thing — eat it standing on the street",
+        "Visit weekdays; weekend crowds in the Marais are brutal"
+      ],
+      "Saint-Germain": [
+        "Café de Flore is for tourists; Café Procope on Rue de l'Ancienne Comédie is the real one",
+        "Luxembourg Gardens are quieter than Tuileries and nicer to sit in"
+      ],
+      "Montmartre": [
+        "Avoid restaurants immediately around Sacré-Cœur — walk two blocks south for actual Parisian prices",
+        "Best view of Paris is from Square Louise Michel, not the basilica steps"
+      ]
+    }
+  },
+  "Plovdiv": {
+    "best_time": "Apr – Jun, Sep – Oct",
+    "visit_duration": "2–3 days",
+    "budget_level": "$",
+    "vibes": [
+      "Culture",
+      "City Break"
+    ],
+    "neighbourhood_tips": {
+      "Old Town (Staría Grad)": [
+        "Visit during the Lampartite light festival in December — the whole old town becomes a gallery",
+        "The Kapana (the Trap) creative quarter is separate from the Old Town but a 5-minute walk"
+      ],
+      "Kapana": [
+        "Bar 4 on Bratya Pulevi for natural wine — small bar, excellent selection, no tourist pricing",
+        "Friday and Saturday evenings the whole district comes alive — skip it during the day, go at night"
+      ],
+      "Kършияка": [
+        "Trud Market on Saturday mornings for produce and secondhand finds",
+        "Café One for breakfast — run by locals, prices haven't changed in years"
+      ]
+    }
+  },
+  "Porto": {
+    "best_time": "Apr – Jun, Sep – Oct",
+    "visit_duration": "3–5 days",
+    "budget_level": "$$",
+    "vibes": [
+      "City Break",
+      "Food",
+      "Culture"
+    ],
+    "neighbourhood_tips": {
+      "Ribeira": [
+        "Tasca do Chico for fado — tiny, book in advance, one of the last authentic fado restaurants in Portugal",
+        "Walk across Dom Luís Bridge to Vila Nova de Gaia for port wine tasting — the cellars are free to tour"
+      ],
+      "Bonfim": [
+        "Mercado do Bolhão for produce and local life — better than any tourist market",
+        "Cantina 32 for creative Portuguese food at reasonable prices"
+      ],
+      "Foz do Douro": [
+        "Matosinhos is a 30-minute walk along the coast — best grilled fish restaurants in the region",
+        "Sunset at the Atlantic from Praia de Matosinhos is one of the best in Portugal"
+      ]
+    }
+  },
+  "Reykjavik": {
+    "best_time": "Jun – Aug, Oct – Mar",
+    "visit_duration": "5–7 days",
+    "budget_level": "$$$",
+    "vibes": [
+      "Adventure",
+      "City Break"
+    ],
+    "neighbourhood_tips": {
+      "101 Reykjavik": [
+        "The hot dog stand by the harbour (Bæjarins Beztu) — cash only, been there since 1937",
+        "Laugavegur Street for everything in the evening — eat at Snaps bistro for local fish"
+      ],
+      "Grandi": [
+        "Sægreifinn (Sea Baron) for the best lobster soup in Iceland for about $10",
+        "Whale watching from the Old Harbour — book Elding tours, most reliable operators"
+      ],
+      "Laugardalur": [
+        "Laugardalslaug public pool — huge thermal complex for about $9, where Icelanders actually swim",
+        "Árbær Open Air Museum gives real context for how Icelanders lived 100 years ago"
+      ]
+    }
+  },
+  "Riga": {
+    "best_time": "May – Sep",
+    "visit_duration": "2–3 days",
+    "budget_level": "$",
+    "vibes": [
+      "City Break",
+      "Culture"
+    ],
+    "neighbourhood_tips": {
+      "Old Town (Vecrīga)": [
+        "Ēdnīca Lāčplēsis on Lāčplēša iela for Latvian home-style food at Soviet cafeteria prices — it's excellent",
+        "St. Peter's Church tower for the best views over the old town — lift costs €9"
+      ],
+      "Art Nouveau District": [
+        "The Art Nouveau Museum at Alberta 12 shows the interiors — mandatory if you're walking the street",
+        "Most buildings are still residential — ring the bell on any unlocked door to look at the entrance halls"
+      ],
+      "Ķīpsala": [
+        "Walk across the Vanšu Bridge and follow the river embankment — quiet, local, tourist-free",
+        "Lido at Ķīpsala is the largest Latvian food hall in the country — cheap, excellent, open all day"
+      ]
+    }
+  },
+  "Rome": {
+    "best_time": "Apr – Jun, Sep – Oct",
+    "visit_duration": "3–5 days",
+    "budget_level": "$$",
+    "vibes": [
+      "Culture",
+      "Food",
+      "City Break"
+    ],
+    "neighbourhood_tips": {
+      "Trastevere": [
+        "Eat before 7:30pm or after 9pm to avoid the tourist dinner rush completely",
+        "Da Enzo al 29 — cash only, no reservations, queue outside. Worth it."
+      ],
+      "Prati": [
+        "Best gelato in Rome: Fatamorgana on Via Laurina — unusual flavours done properly",
+        "Walk to Castel Sant'Angelo along the river at sunset — almost nobody does this"
+      ],
+      "Testaccio": [
+        "Flavio al Velavevodetto for cacio e pepe — not tourist-facing, proper Roman trattoria",
+        "The non-Catholic cemetery here has Keats and Shelley's graves and is unexpectedly beautiful"
+      ]
+    }
+  },
+  "Santorini": {
+    "best_time": "May – Oct",
+    "visit_duration": "3–5 days",
+    "budget_level": "$$$",
+    "vibes": [
+      "Beach",
+      "City Break"
+    ],
+    "neighbourhood_tips": {
+      "Oia": [
+        "Book sunset restaurants at least a week ahead — everyone is trying to eat at the same time",
+        "Walk the path from Fira to Oia (10km) — the best views are along the way, not just at the end"
+      ],
+      "Fira": [
+        "Better for nightlife and eating than Oia — far fewer tourists staying here",
+        "The cable car down to the old port is fine; the donkeys are faster but be prepared"
+      ],
+      "Imerovigli": [
+        "Skaros Rock walk starts here — 45 minutes return, no crowds, best caldera view on the island",
+        "Quietest of the three main towns; restaurants are mostly hotel-only which is a disadvantage"
+      ]
+    }
+  },
+  "Sarajevo": {
+    "best_time": "May – Sep",
+    "visit_duration": "3–4 days",
+    "budget_level": "$",
+    "vibes": [
+      "Culture",
+      "City Break",
+      "Food"
+    ],
+    "neighbourhood_tips": {
+      "Baščaršija": [
+        "Ćevapi at Petica — the original spot, one of the oldest restaurants in the city",
+        "Walk across the Latin Bridge — this is where Franz Ferdinand was assassinated in 1914"
+      ],
+      "Grbavica": [
+        "Klub Kulture Kriterion is the best bar in the city — in a renovated cinema",
+        "Kibe Mahala neighbourhood market on Saturday mornings — all local, no tourists"
+      ],
+      "Ilidža": [
+        "Vrelo Bosne park — the spring source of the Bosna river, rent a horse-drawn carriage",
+        "Terme Federal Hotel spa is open to non-guests for day use — thermal pools at low prices"
+      ]
+    }
+  },
+  "Singapore": {
+    "best_time": "Feb – Apr",
+    "visit_duration": "4–6 days",
+    "budget_level": "$$$",
+    "vibes": [
+      "City Break",
+      "Food",
+      "Culture"
+    ],
+    "neighbourhood_tips": {
+      "Orchard Road": [
+        "ION Orchard basement food court is the best value eating in the city",
+        "Avoid Orchard Road on weekends if you're shopping — go on a weekday"
+      ],
+      "Chinatown": [
+        "Maxwell Food Centre for chicken rice — Tian Tian stall has the queue and deserves it",
+        "Sri Mariamman Temple is the oldest in Singapore and free to enter"
+      ],
+      "East Coast": [
+        "Jumbo Seafood for chilli crab — order the mantou buns to soak up the sauce",
+        "East Coast Park is where Singaporeans actually go on weekends; rent a bike"
+      ]
+    }
+  },
+  "Split": {
+    "best_time": "May – Jun, Sep",
+    "visit_duration": "3–5 days",
+    "budget_level": "$$",
+    "vibes": [
+      "Beach",
+      "Adventure",
+      "Culture"
+    ],
+    "neighbourhood_tips": {
+      "Diocletian's Palace": [
+        "The basement halls (entrance from Peristyle) are free and mostly ignored by tourists",
+        "Eat at Fife on Trogirska Street — cash only, standing room only at lunch, genuinely local"
+      ],
+      "Bačvice": [
+        "Picigin — the local beach ball game is played here every morning. Join in if you want.",
+        "The bars close around 1am and the beach stays busy until then in summer"
+      ],
+      "Varoš": [
+        "Stari Grad restaurant on Aljinovića for Dalmatian food without the palace premium",
+        "The highest point gives views over the palace rooftops — unmarked path, worth finding"
+      ]
+    }
+  },
+  "Sydney": {
+    "best_time": "Sep – Nov, Mar – May",
+    "visit_duration": "4–7 days",
+    "budget_level": "$$$",
+    "vibes": [
+      "Beach",
+      "City Break",
+      "Adventure"
+    ],
+    "neighbourhood_tips": {
+      "Circular Quay": [
+        "The Manly ferry is the best $5 you'll spend — 30 minutes of harbour views",
+        "Opera House tours are worth it; the building is better inside than outside"
+      ],
+      "Bondi Beach": [
+        "Walk the coastal path to Bronte and Coogee — far less crowded than Bondi Beach",
+        "Icebergs pool is a Sydney institution; swim early morning for the full experience"
+      ],
+      "Surry Hills": [
+        "Crown Street has the best independent coffee and food in Sydney",
+        "Bills on Crown Street for breakfast — the ricotta pancakes are exactly what people say they are"
+      ]
+    }
+  },
+  "Tbilisi": {
+    "best_time": "Apr – Jun, Sep – Oct",
+    "visit_duration": "4–7 days",
+    "budget_level": "$",
+    "vibes": [
+      "Culture",
+      "Food",
+      "City Break"
+    ],
+    "neighbourhood_tips": {
+      "Old Town (Abanot-ubani)": [
+        "Sulphur baths in Abanotubani — Chreli Abano is the best value public bath at about $5",
+        "Walk up to Narikala Fortress in the evening for the best view over the city"
+      ],
+      "Fabrika": [
+        "Good for coffee in the morning, cocktails in the evening — the courtyard fills after 8pm",
+        "The hostel inside is one of the best in the city even if you're not staying there"
+      ],
+      "Vera": [
+        "Entree restaurant on Tsereteli Ave — Georgian food done properly without tourist markup",
+        "The Botanical Garden is a 20-minute walk from Fabrika through the old town"
+      ]
+    }
+  },
+  "Tokyo": {
+    "best_time": "Mar – May, Oct – Nov",
+    "visit_duration": "5–7 days",
+    "budget_level": "$$",
+    "vibes": [
+      "City Break",
+      "Culture",
+      "Food"
+    ],
+    "neighbourhood_tips": {
+      "Shinjuku": [
+        "Golden Gai has ~200 tiny bars — just pick one that looks interesting and walk in",
+        "East side (Golden Gai) and west side (Omoide Yokocho) feel completely different — both worth a night"
+      ],
+      "Shibuya": [
+        "The famous crossing is best from the Starbucks window above — less chaotic, better photos",
+        "Yoyogi Park is 10 minutes from Harajuku station; go Sunday afternoon"
+      ],
+      "Yanaka": [
+        "Yanaka Ginza shopping street is one of the few places in Tokyo that feels pre-war",
+        "The cemetery here is surprisingly beautiful and worth walking through"
+      ]
+    }
+  },
+  "Valletta": {
+    "best_time": "Mar – May, Oct – Nov",
+    "visit_duration": "2–3 days",
+    "budget_level": "$$",
+    "vibes": [
+      "Culture",
+      "City Break"
+    ],
+    "neighbourhood_tips": {
+      "Valletta Proper": [
+        "Upper Barrakka Gardens for the 12 noon cannon firing — free, spectacular, takes 2 minutes",
+        "Trabuxu Bistro in Strait Street for the best wine list in Malta"
+      ],
+      "Sliema": [
+        "Exiles Beach for swimming — concrete lido, free to use, far better than any paid beach",
+        "Walk one block inland from The Strand restaurants for local prices"
+      ],
+      "Marsaxlokk": [
+        "Sunday market starts at 7am and winds down by 10am — don't arrive after that",
+        "Ir-Rizzu restaurant right on the harbour for the freshest fish on the island"
+      ]
+    }
+  },
+  "Yogyakarta": {
+    "best_time": "May – Sep",
+    "visit_duration": "4–6 days",
+    "budget_level": "$",
+    "vibes": [
+      "Culture",
+      "Adventure"
+    ],
+    "neighbourhood_tips": {
+      "Kraton (Palace Quarter)": [
+        "The palace interior has restricted access — the outer grounds are free and worth an hour",
+        "Batik workshops on Jalan Tirtodipuran: watch the process and buy direct from the maker"
+      ],
+      "Prawirotaman": [
+        "ViaVia café is the neighbourhood hub — good food, notice board for local events and tours",
+        "Most guesthouses here will organise a driver to Borobudur for sunrise — book the night before"
+      ],
+      "Kota Gede": [
+        "Silver workshops still do everything by hand — you can watch the process for free and buy at source",
+        "The old royal cemetery at Imogiri is 20 minutes south and rarely visited"
+      ]
+    }
+  }
+}

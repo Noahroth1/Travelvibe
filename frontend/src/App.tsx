@@ -8,7 +8,7 @@ type Trip = { id: string; name: string; destinations: string[]; createdAt: numbe
 
 type City = { name: string; country: string }
 
-type Neighbourhood = { name: string; vibe: string }
+type Neighbourhood = { name: string; vibe: string; tips: string[] }
 
 type Destination = {
   name: string
@@ -17,8 +17,12 @@ type Destination = {
   description: string
   image: string
   detail: string
+  best_time: string | null
+  visit_duration: string | null
+  budget_level: '$' | '$$' | '$$$' | null
+  vibes: Vibe[]
   neighbourhoods: Neighbourhood[]
-  gallery?: string[]
+  gallery: string[]
 }
 
 const heroSlides = [
@@ -52,876 +56,9 @@ const regionColors: Record<string, { bg: string; color: string }> = {
 
 const regions: Region[] = ['All', 'Europe', 'Asia', 'Americas', 'Middle East', 'Oceania', 'Africa']
 
-const featuredDestinations: Destination[] = [
-  {
-    name: "Bali",
-    country: "Indonesia",
-    region: "Asia",
-    description: "Everyone ends up here. The question is which part you actually want to be in.",
-    image: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=400&h=200&fit=crop",
-    detail: "Ubud, Seminyak, Canggu — same island, totally different trips. Most people pick wrong the first time.",
-    gallery: [
-      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=380&fit=crop",
-      "https://images.unsplash.com/photo-1573790387438-4da905039392?w=600&h=380&fit=crop",
-    ],
-    neighbourhoods: [
-      { name: "Ubud", vibe: "Rice field treks, spiritual temples & jungle retreats" },
-      { name: "Seminyak", vibe: "Boutique hotels, sunset beach bars & rooftop dining" },
-      { name: "Canggu", vibe: "Surf breaks, co-working cafés & the creative scene" },
-    ],
-  },
-  {
-    name: "Paris",
-    country: "France",
-    region: "Europe",
-    description: "Lived in or visited — Paris feels completely different depending on where you stay.",
-    image: "https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?w=400&h=200&fit=crop",
-    detail: "Le Marais has a completely different energy from Montmartre. Same city, two different trips.",
-    gallery: [
-      "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=600&h=380&fit=crop",
-      "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&h=380&fit=crop",
-    ],
-    neighbourhoods: [
-      { name: "Le Marais", vibe: "Art galleries, Jewish quarter, vibrant nightlife & the best falafel" },
-      { name: "Saint-Germain", vibe: "Classic cafés, independent boutiques & literary history" },
-      { name: "Montmartre", vibe: "Cobblestones, Sacré-Cœur & sweeping city panoramas" },
-    ],
-  },
-  {
-    name: "Tokyo",
-    country: "Japan",
-    region: "Asia",
-    description: "Overwhelming at first. Then you find your neighbourhood and the whole city clicks.",
-    image: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=400&h=200&fit=crop",
-    detail: "No two districts feel alike. Shinjuku and Yanaka could be different cities entirely.",
-    gallery: [
-      "https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=600&h=380&fit=crop",
-      "https://images.unsplash.com/photo-1526481280693-3bfa7568e0f3?w=600&h=380&fit=crop",
-    ],
-    neighbourhoods: [
-      { name: "Shinjuku", vibe: "City pulse, neon-lit alleys, izakayas & the main transit hub" },
-      { name: "Shibuya", vibe: "Iconic crossing, youth fashion, department stores & live music" },
-      { name: "Yanaka", vibe: "Old Tokyo charm, temple streets & handmade artisan shops" },
-    ],
-  },
-  {
-    name: "New York",
-    country: "USA",
-    region: "Americas",
-    description: "Picking the wrong neighbourhood here costs you an hour each way, every day.",
-    image: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=400&h=200&fit=crop",
-    detail: "Midtown is convenient and soulless. Brooklyn is worth the subway. You need to pick before you book.",
-    gallery: [
-      "https://images.unsplash.com/photo-1541336032412-2048a678540d?w=600&h=380&fit=crop",
-      "https://images.unsplash.com/photo-1534430480872-3498386e7856?w=600&h=380&fit=crop",
-    ],
-    neighbourhoods: [
-      { name: "Midtown", vibe: "Central Park, Times Square, skyscraper views & everything in reach" },
-      { name: "Williamsburg", vibe: "Brooklyn creative hub, rooftop bars, record stores & great food" },
-      { name: "Lower East Side", vibe: "Downtown edge, vintage clothing, late-night venues & culture" },
-    ],
-  },
-  {
-    name: "Santorini",
-    country: "Greece",
-    region: "Europe",
-    description: "Tiny island. Huge price range. Where you stay changes everything about the experience.",
-    image: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=400&h=200&fit=crop",
-    detail: "Oia gets the photos. Fira has the restaurants. Imerovigli has the quiet. You can't have all three.",
-    gallery: [
-      "https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?w=600&h=380&fit=crop",
-      "https://images.unsplash.com/photo-1504512485720-7d83a16ee930?w=600&h=380&fit=crop",
-    ],
-    neighbourhoods: [
-      { name: "Oia", vibe: "Blue-domed churches, cliffside walks & the best sunsets on Earth" },
-      { name: "Fira", vibe: "The main town — restaurants, nightlife & unbroken caldera views" },
-      { name: "Imerovigli", vibe: "Quietest spot, highest ridge & the most dramatic scenery" },
-    ],
-  },
-  {
-    name: "Dubai",
-    country: "UAE",
-    region: "Middle East",
-    description: "Sky-high ambition and ancient souks in the same taxi ride. Stranger than it sounds.",
-    image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400&h=200&fit=crop",
-    detail: "Downtown Dubai and Al Fahidi feel like different centuries. Both are worth your time — but not from the same hotel.",
-    gallery: [
-      "https://images.unsplash.com/photo-1518684079-3c830dcef090?w=600&h=380&fit=crop",
-      "https://images.unsplash.com/photo-1587474260584-136574528ed5?w=600&h=380&fit=crop",
-    ],
-    neighbourhoods: [
-      { name: "Downtown", vibe: "Burj Khalifa, Dubai Mall, fountain shows & luxury hotels" },
-      { name: "Jumeirah Beach", vibe: "Beachfront resorts, watersports, open sea & white sand" },
-      { name: "Al Fahidi", vibe: "Historic wind towers, traditional souks & authentic old Dubai" },
-    ],
-  },
-  {
-    name: "Machu Picchu",
-    country: "Peru",
-    region: "Americas",
-    description: "Getting there is half the trip. Most people don't plan that part properly.",
-    image: "https://images.unsplash.com/photo-1526392060635-9d6019884377?w=400&h=200&fit=crop",
-    detail: "You need to acclimatise before you ascend. Cusco is non-negotiable. The trek or the train — that's your real first choice.",
-    gallery: [
-      "https://images.unsplash.com/photo-1575936123452-b67c3203c357?w=600&h=380&fit=crop",
-      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600&h=380&fit=crop",
-    ],
-    neighbourhoods: [
-      { name: "Aguas Calientes", vibe: "Gateway base town, hot springs, jungle market & easy citadel access" },
-      { name: "Inca Trail", vibe: "4-day classic trek through mountain cloud forest & ancient ruins" },
-      { name: "Cusco", vibe: "Inca stonework, colonial plazas, altitude acclimatisation & great dining" },
-    ],
-  },
-  {
-    name: "Sydney",
-    country: "Australia",
-    region: "Oceania",
-    description: "Bondi is just the postcard. There's a whole other city behind it worth exploring.",
-    image: "https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=400&h=200&fit=crop",
-    detail: "Circular Quay has the views. Bondi has the beach. Surry Hills has the restaurants worth lining up for.",
-    gallery: [
-      "https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?w=600&h=380&fit=crop",
-      "https://images.unsplash.com/photo-1546268060-2592ff93ee24?w=600&h=380&fit=crop",
-    ],
-    neighbourhoods: [
-      { name: "Circular Quay", vibe: "Opera House steps, Harbour Bridge views & ferry connections everywhere" },
-      { name: "Bondi Beach", vibe: "Surf culture, the coastal walk, weekend markets & all-day café life" },
-      { name: "Surry Hills", vibe: "Indie restaurants, craft bars, gallery spaces & the local scene" },
-    ],
-  },
-  {
-    name: "Rome",
-    country: "Italy",
-    region: "Europe",
-    description: "Overrun, overpriced in parts, and still one of the best cities on earth.",
-    image: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=400&h=200&fit=crop",
-    detail: "Two thousand years of history on a street you walked to get coffee. Pick the wrong neighbourhood and you're paying tourist prices for everything.",
-    gallery: [
-      "https://images.unsplash.com/photo-1529154036614-a60975f5c760?w=600&h=380&fit=crop",
-      "https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=600&h=380&fit=crop",
-    ],
-    neighbourhoods: [
-      { name: "Trastevere", vibe: "Evening restaurants, ivy-covered walls, local market & no chain stores" },
-      { name: "Prati", vibe: "Quiet residential blocks near the Vatican, good food, few tourists" },
-      { name: "Testaccio", vibe: "The original Rome — the market, meat-heavy food culture & proper locals" },
-    ],
-  },
-  {
-    name: "Barcelona",
-    country: "Spain",
-    region: "Europe",
-    description: "Beach city with a food scene serious enough that the beach almost becomes secondary.",
-    image: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=400&h=200&fit=crop",
-    detail: "Don't stay in the Gothic Quarter for a week. It's for day trips. The rest of the city is where the actual Barcelona is.",
-    gallery: [
-      "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=600&h=380&fit=crop",
-      "https://images.unsplash.com/photo-1464790719320-516ecd75af6c?w=600&h=380&fit=crop",
-    ],
-    neighbourhoods: [
-      { name: "Eixample", vibe: "Gaudí buildings, wide avenues, the main restaurant scene & good transport" },
-      { name: "Gràcia", vibe: "Bohemian, local, summer fiestas & completely away from the tourist track" },
-      { name: "Barceloneta", vibe: "Beach neighbourhood, seafood, crowded in summer but still worth it" },
-    ],
-  },
-  {
-    name: "Amsterdam",
-    country: "Netherlands",
-    region: "Europe",
-    description: "Smaller than people expect. More interesting than the reputation suggests.",
-    image: "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=400&h=200&fit=crop",
-    detail: "The canal ring is beautiful. The Jordaan has the best independent shops in the city. The museums are world-class. Most people spend the whole trip in a three-block radius.",
-    gallery: [
-      "https://images.unsplash.com/photo-1512470876302-972faa2aa9a4?w=600&h=380&fit=crop",
-      "https://images.unsplash.com/photo-1576924542622-772281b13aa8?w=600&h=380&fit=crop",
-    ],
-    neighbourhoods: [
-      { name: "Jordaan", vibe: "Narrow canals, independent galleries, the best cafés & weekly markets" },
-      { name: "De Pijp", vibe: "The local choice — Albert Cuyp market, Indonesian food & good bars" },
-      { name: "Oud-West", vibe: "Residential, creative, and the version of Amsterdam that locals actually live in" },
-    ],
-  },
-  {
-    name: "Singapore",
-    country: "Singapore",
-    region: "Asia",
-    description: "The city that proves efficiency and character aren't mutually exclusive.",
-    image: "https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=400&h=200&fit=crop",
-    detail: "Expensive by Southeast Asia standards but also completely different from the rest of it. The hawker centres alone are worth the flight.",
-    gallery: [
-      "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=600&h=380&fit=crop",
-      "https://images.unsplash.com/photo-1555217851-6141535bd771?w=600&h=380&fit=crop",
-    ],
-    neighbourhoods: [
-      { name: "Marina Bay", vibe: "Skyline views, the spectacle and luxury that genuinely delivers" },
-      { name: "Tiong Bahru", vibe: "Singapore's oldest estate — independent bookshops, excellent coffee" },
-      { name: "Little India", vibe: "The most sensory neighbourhood, cheap hawker food & completely different energy" },
-    ],
-  },
-  {
-    name: "Bangkok",
-    country: "Thailand",
-    region: "Asia",
-    description: "Chaotic, loud, brilliant. The food will ruin every Thai restaurant back home.",
-    image: "https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=400&h=200&fit=crop",
-    detail: "Sukhumvit for convenience, Rattanakosin for the temples, Ari for the locals. The traffic is bad but the BTS skytrain means you rarely need a taxi.",
-    gallery: [
-      "https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=600&h=380&fit=crop",
-      "https://images.unsplash.com/photo-1513568720563-6a5b8c6caab3?w=600&h=380&fit=crop",
-    ],
-    neighbourhoods: [
-      { name: "Sukhumvit", vibe: "Expat hub, BTS access, international restaurants & busy nightlife" },
-      { name: "Rattanakosin", vibe: "Historic island, temples, the river & the old backpacker scene" },
-      { name: "Ari", vibe: "Residential, the Bangkok that locals actually use — good for a slower week" },
-    ],
-  },
-  {
-    name: "Kyoto",
-    country: "Japan",
-    region: "Asia",
-    description: "Tokyo has momentum. Kyoto makes you actually stop and look.",
-    image: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=400&h=200&fit=crop",
-    detail: "Visit in spring for cherry blossoms or autumn for the maples. Avoid Golden Week. The city rewards slow walking — rent a bicycle and get into the backstreets.",
-    gallery: [
-      "https://images.unsplash.com/photo-1492571350019-22de08371fd3?w=600&h=380&fit=crop",
-      "https://images.unsplash.com/photo-1578469645742-46cae010e5d4?w=600&h=380&fit=crop",
-    ],
-    neighbourhoods: [
-      { name: "Higashiyama", vibe: "Temple district, preserved machiya townhouses & scenic evening walks" },
-      { name: "Gion", vibe: "Geisha district, traditional teahouses — best on weekday evenings" },
-      { name: "Arashiyama", vibe: "Bamboo grove, riverside temples & worth the 25-minute train from center" },
-    ],
-  },
-  {
-    name: "Reykjavik",
-    country: "Iceland",
-    region: "Europe",
-    description: "The whole country is the attraction. The city is just where you start.",
-    image: "https://images.unsplash.com/photo-1504893524553-b855bce32c67?w=400&h=200&fit=crop",
-    detail: "Northern lights from October to March. Midnight sun in summer. Waterfalls and geysers within two hours of the city. Book the car, not just the hotel.",
-    gallery: [
-      "https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=600&h=380&fit=crop",
-      "https://images.unsplash.com/photo-1606130503037-6a8ef67c9d2d?w=600&h=380&fit=crop",
-    ],
-    neighbourhoods: [
-      { name: "101 Reykjavik", vibe: "The center — everything walkable, the bar scene & Hallgrímskirkja church" },
-      { name: "Grandi", vibe: "Harbor district, fish and chips, whale watching & the Viking World museum" },
-      { name: "Laugardalur", vibe: "East of center, the geothermal pool complex & quieter residential streets" },
-    ],
-  },
-  {
-    name: "Buenos Aires",
-    country: "Argentina",
-    region: "Americas",
-    description: "Steak, tango, and a European city accidentally in South America.",
-    image: "https://images.unsplash.com/photo-1589909202802-8f4aadce1849?w=400&h=200&fit=crop",
-    detail: "Flights are expensive but once you land everything else isn't. Dinner starts at 10pm. The wine is better and cheaper than anywhere. Stay at least ten days.",
-    gallery: [
-      "https://images.unsplash.com/photo-1580476262798-bddd9f4b7369?w=600&h=380&fit=crop",
-      "https://images.unsplash.com/photo-1679417302656-9b5170584526?w=600&h=380&fit=crop",
-    ],
-    neighbourhoods: [
-      { name: "Palermo", vibe: "Parks, brunch culture, design boutiques and the main nightlife zone" },
-      { name: "San Telmo", vibe: "Antiques market, tango shows, colonial buildings and Sunday feria" },
-      { name: "Recoleta", vibe: "Elegant boulevards, French architecture, the cemetery and old money energy" },
-    ],
-  },
-]
-
-const affordableDestinations: Destination[] = [
-  {
-    name: "Tbilisi",
-    country: "Georgia",
-    region: "Europe",
-    description: "A city that rewards the people who bother to show up. Most don't.",
-    image: "https://images.unsplash.com/photo-1565008576549-57569a49371d?w=400&h=200&fit=crop",
-    detail: "Wine, sulphur baths, Soviet brutalism next to medieval churches. The old town feels like it hasn't been renovated for tourism yet — and that's exactly the point.",
-    gallery: [
-      "https://images.unsplash.com/photo-1596484552834-6a58f850e0a1?w=600&h=380&fit=crop",
-      "https://images.unsplash.com/photo-1560185127-6ed189bf02f4?w=600&h=380&fit=crop",
-    ],
-    neighbourhoods: [
-      { name: "Old Town (Abanot-ubani)", vibe: "Sulphur baths, balconied houses & the authentic Tbilisi atmosphere" },
-      { name: "Fabrika", vibe: "Repurposed Soviet factory, boutiques, craft bars & creative coworking" },
-      { name: "Vera", vibe: "Tree-lined streets, local cafés, less tourist-facing and genuinely residential" },
-    ],
-  },
-  {
-    name: "Medellín",
-    country: "Colombia",
-    region: "Americas",
-    description: "The transformation story is real. More importantly, the city is just good now.",
-    image: "https://images.unsplash.com/photo-1558008258-3256797b43f3?w=400&h=200&fit=crop",
-    detail: "Cable cars to hilltop neighbourhoods. A metro that actually works. Street food that costs less than your morning coffee back home. Come for a week, stay considerably longer.",
-    gallery: [
-      "https://images.unsplash.com/photo-1519452575417-564c1401ecc0?w=600&h=380&fit=crop",
-      "https://images.unsplash.com/photo-1512250431446-d0b4b57b27ec?w=600&h=380&fit=crop",
-    ],
-    neighbourhoods: [
-      { name: "El Poblado", vibe: "Expat hub, restaurants and nightlife — comfortable but not cheap for Colombia" },
-      { name: "Laureles", vibe: "Local neighbourhood feel, better value, great cycling infrastructure" },
-      { name: "La Candelaria", vibe: "Historic centre, street art, slightly rough around the edges, properly local" },
-    ],
-  },
-  {
-    name: "Porto",
-    country: "Portugal",
-    region: "Europe",
-    description: "Better than Lisbon for most trips and half the price. Don't tell everyone.",
-    image: "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=400&h=200&fit=crop",
-    detail: "Azulejo tiles, river views, port wine cellars, and steep streets that make you work for the view. Smaller than Lisbon, easier to get around, and still genuinely affordable.",
-    gallery: [
-      "https://images.unsplash.com/photo-1513735492246-483525079686?w=600&h=380&fit=crop",
-      "https://images.unsplash.com/photo-1548707309-dcebeab9ea9b?w=600&h=380&fit=crop",
-    ],
-    neighbourhoods: [
-      { name: "Ribeira", vibe: "UNESCO waterfront, wine bars and the classic postcard view from Dom Luís Bridge" },
-      { name: "Bonfim", vibe: "The real Porto — locals, indie shops, not a tourist trap" },
-      { name: "Foz do Douro", vibe: "Where the river meets the sea, residential and calm" },
-    ],
-  },
-  {
-    name: "Chiang Mai",
-    country: "Thailand",
-    region: "Asia",
-    description: "Bangkok gets the bookings. Chiang Mai gets the return visits.",
-    image: "https://images.unsplash.com/photo-1512553353614-82a7370096dc?w=400&h=200&fit=crop",
-    detail: "300 temples, night markets, mountains within an hour, and a cost of living that makes it the de facto base for Southeast Asia slow travel. Cooler and calmer than the south.",
-    gallery: [
-      "https://images.unsplash.com/photo-1506665531195-3566af2b4dfa?w=600&h=380&fit=crop",
-      "https://images.unsplash.com/photo-1599576838688-8a6c11263108?w=600&h=380&fit=crop",
-    ],
-    neighbourhoods: [
-      { name: "Old City", vibe: "Moat-surrounded historic core, temples at every corner, guesthouses and cafés" },
-      { name: "Nimman", vibe: "The creative quarter — coffee culture, boutique shops, co-working" },
-      { name: "Riverside", vibe: "Laid back, good food, less touristy and cooler in the evenings" },
-    ],
-  },
-  {
-    name: "Sarajevo",
-    country: "Bosnia & Herzegovina",
-    region: "Europe",
-    description: "The most underestimated city in Europe. Not for long.",
-    image: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=400&h=200&fit=crop",
-    detail: "East meets West in the most literal sense — Ottoman bazaars give way to Austro-Hungarian architecture on the same street. Excellent food, almost no queues, and hotels that would cost four times as much in Prague.",
-    gallery: [
-      "https://images.unsplash.com/photo-1570831709673-03320e9d734f?w=600&h=380&fit=crop",
-      "https://images.unsplash.com/photo-1551969014-7d2c4cddf0b6?w=600&h=380&fit=crop",
-    ],
-    neighbourhoods: [
-      { name: "Baščaršija", vibe: "Ottoman old bazaar, coppersmith streets and the beating cultural heart of the city" },
-      { name: "Grbavica", vibe: "Post-war residential quarter, lived-in feel and away from tourist circuits" },
-      { name: "Ilidža", vibe: "Green spa suburb, hot springs, tram ride from centre" },
-    ],
-  },
-  {
-    name: "Oaxaca",
-    country: "Mexico",
-    region: "Americas",
-    description: "Every food person you know has been here. They're not wrong.",
-    image: "https://images.unsplash.com/photo-1518638150340-f706e86654de?w=400&h=200&fit=crop",
-    detail: "Mezcal, mole negro, tlayudas, and some of the most distinct regional craft in Mexico. The historic centre is genuinely walkable and the surrounding valley has enough to fill two weeks without repeating yourself.",
-    gallery: [
-      "https://images.unsplash.com/photo-1569880153113-76e33fc52d5f?w=600&h=380&fit=crop",
-      "https://images.unsplash.com/photo-1660670173026-ec491dd3dd1a?w=600&h=380&fit=crop",
-    ],
-    neighbourhoods: [
-      { name: "Centro Histórico", vibe: "Colonial zócalo, colourful facades, markets and the main cultural strip" },
-      { name: "Jalatlaco", vibe: "Quiet cobblestoned barrio, boutique stays and excellent breakfast spots" },
-      { name: "Xochimilco", vibe: "Local barrio, few tourists, traditional food and authentic neighbourhood life" },
-    ],
-  },
-  {
-    name: "Plovdiv",
-    country: "Bulgaria",
-    region: "Europe",
-    description: "Older than Athens, quieter than anywhere, and €10 dinners with wine.",
-    image: "https://images.unsplash.com/photo-1560969184-10fe8719e047?w=400&h=200&fit=crop",
-    detail: "Seven hills, a Roman amphitheatre still used for concerts, and an old town that looks like it was painted by someone with too much talent. The rest of Europe hasn't caught up yet.",
-    gallery: [
-      "https://images.unsplash.com/photo-1593246049226-ded77bf90326?w=600&h=380&fit=crop",
-      "https://images.unsplash.com/photo-1504214208698-ea1916a2195a?w=600&h=380&fit=crop",
-    ],
-    neighbourhoods: [
-      { name: "Old Town (Staría Grad)", vibe: "National Revival architecture, galleries, art studios and the hilltop panorama" },
-      { name: "Kapana", vibe: "The Trap — creative district, street art, independent bars and restaurants" },
-      { name: "Kършияка", vibe: "Residential northern bank, local market, none of the tourist surcharge" },
-    ],
-  },
-  {
-    name: "Kotor",
-    country: "Montenegro",
-    region: "Europe",
-    description: "A walled medieval city that costs a third of Dubrovnik and is half as crowded.",
-    image: "https://images.unsplash.com/photo-1587974928442-77dc3e0dba72?w=400&h=200&fit=crop",
-    detail: "Bay of Kotor, stone streets, cats everywhere by local tradition, and fortress walls you can walk. Base here and day-trip the rest of the Adriatic coast without the cruise ship crowds.",
-    gallery: [
-      "https://images.unsplash.com/photo-1533669955142-6a73332af4db?w=600&h=380&fit=crop",
-      "https://images.unsplash.com/photo-1540202404-a2f29016b523?w=600&h=380&fit=crop",
-    ],
-    neighbourhoods: [
-      { name: "Stari Grad (Old Town)", vibe: "Walled city, medieval churches, narrow alleys and the main social scene" },
-      { name: "Dobrota", vibe: "Bayside village just north of the walls, calm, local and half the price" },
-      { name: "Prčanj", vibe: "Quietest stretch of the bay, baroque mansions and very few other travellers" },
-    ],
-  },
-  {
-    name: "Budapest",
-    country: "Hungary",
-    region: "Europe",
-    description: "The ruin bars alone are worth the flight. Everything else is a bonus.",
-    image: "https://images.unsplash.com/photo-1541343672885-9be56236302a?w=400&h=200&fit=crop",
-    detail: "Two cities separated by the Danube. Buda is quiet and hilly. Pest is where everything happens. The thermal baths work out to about the price of a coffee back home.",
-    gallery: [
-      "https://images.unsplash.com/photo-1616432902940-b7a1acbc60b3?w=600&h=380&fit=crop",
-      "https://images.unsplash.com/photo-1551867633-194f125bddfa?w=600&h=380&fit=crop",
-    ],
-    neighbourhoods: [
-      { name: "District VII (Jewish Quarter)", vibe: "Ruin bars, the old ghetto, best nightlife in Central Europe" },
-      { name: "Buda Castle District", vibe: "History on a hill, panoramic views over the Danube and zero nightlife" },
-      { name: "District IX (Ferencváros)", vibe: "Emerging neighbourhood, cheaper accommodation and a young creative scene" },
-    ],
-  },
-  {
-    name: "Hoi An",
-    country: "Vietnam",
-    region: "Asia",
-    description: "The lanterns are real. The tailors are real. The crowds are real too — go early.",
-    image: "https://images.unsplash.com/photo-1528127269322-539801943592?w=400&h=200&fit=crop",
-    detail: "Get a suit or dress made in 24 hours for less than you'd spend on a takeaway at home. The ancient town is genuinely beautiful at night. The beach is 4km away.",
-    gallery: [
-      "https://images.unsplash.com/photo-1526139334526-f591a54b477c?w=600&h=380&fit=crop",
-      "https://images.unsplash.com/photo-1547919307-1ecb10702e6f?w=600&h=380&fit=crop",
-    ],
-    neighbourhoods: [
-      { name: "Ancient Town", vibe: "UNESCO lantern-lit streets, tailors and the main scene — worth the crowds" },
-      { name: "An Bang Beach", vibe: "4km from town, good seafood, expat-friendly and quieter than Da Nang" },
-      { name: "Cam Nam Island", vibe: "Local island across the footbridge, almost no tourists and good food stalls" },
-    ],
-  },
-  {
-    name: "Mexico City",
-    country: "Mexico",
-    region: "Americas",
-    description: "One of the greatest food cities in the world. It took a while for people to notice.",
-    image: "https://images.unsplash.com/photo-1682916114863-ba2f7b7d39c9?w=400&h=200&fit=crop",
-    detail: "Roma Norte has the restaurant scene. The historic centre has Aztec ruins under colonial buildings. The altitude hits harder than expected. Everything costs less than you think.",
-    gallery: [
-      "https://images.unsplash.com/photo-1585464231875-d9ef1f5ad396?w=600&h=380&fit=crop",
-      "https://images.unsplash.com/photo-1547686669-9a8cb1a22d91?w=600&h=380&fit=crop",
-    ],
-    neighbourhoods: [
-      { name: "Roma Norte", vibe: "Tree-lined streets, design hotels, the best restaurant scene in the country" },
-      { name: "Condesa", vibe: "Art deco apartments, parks, dog walkers and a more residential feel" },
-      { name: "Centro Histórico", vibe: "Aztec ruins beneath colonial buildings — overwhelming, essential and cheap" },
-    ],
-  },
-  {
-    name: "Cartagena",
-    country: "Colombia",
-    region: "Americas",
-    description: "The walled city is as good as the photos. The neighbourhood next to it is better.",
-    image: "https://images.unsplash.com/photo-1538485399081-7191377e8241?w=400&h=200&fit=crop",
-    detail: "Walk the wall at sunset. Eat in Getsemaní. Take a boat to the Rosario Islands. Don't stay in Bocagrande unless you want a beach holiday with none of the character.",
-    gallery: [
-      "https://images.unsplash.com/photo-1534126511673-b6899657816a?w=600&h=380&fit=crop",
-      "https://images.unsplash.com/photo-1583531352515-8884af319dc1?w=600&h=380&fit=crop",
-    ],
-    neighbourhoods: [
-      { name: "Ciudad Amurallada", vibe: "The walled colonial centre, the postcard — and the heat" },
-      { name: "Getsemaní", vibe: "Murals everywhere, the better bars, cheaper food and a neighbourhood with actual life" },
-      { name: "Bocagrande", vibe: "Beach suburb, mostly for families and Colombian tourists — skip unless that's you" },
-    ],
-  },
-  {
-    name: "Split",
-    country: "Croatia",
-    region: "Europe",
-    description: "People actually live inside a Roman palace. That's not a metaphor.",
-    image: "https://images.unsplash.com/photo-1575540291670-8d3b26f7d327?w=400&h=200&fit=crop",
-    detail: "Diocletian's Palace is a UNESCO site where people have apartments and hang their laundry. Base here and island-hop without Dubrovnik's prices and cruise ship crowds.",
-    gallery: [
-      "https://images.unsplash.com/photo-1587330979470-3595ac045ab0?w=600&h=380&fit=crop",
-      "https://images.unsplash.com/photo-1564679937942-90c22d5a0e6e?w=600&h=380&fit=crop",
-    ],
-    neighbourhoods: [
-      { name: "Diocletian's Palace", vibe: "Living inside Roman walls — apartments, restaurants and centuries of overlap" },
-      { name: "Bačvice", vibe: "Beach bar district, the local sport of picigin and the summer social scene" },
-      { name: "Varoš", vibe: "Old stone quarter behind the palace, quiet, local and the best hidden dining" },
-    ],
-  },
-  {
-    name: "Valletta",
-    country: "Malta",
-    region: "Europe",
-    description: "The entire capital is a UNESCO World Heritage Site. It's also the smallest in the EU.",
-    image: "https://images.unsplash.com/photo-1555993539-1732b0258235?w=400&h=200&fit=crop",
-    detail: "Cross it end to end in 20 minutes. Every building has a story going back 500 years. Flights are cheap from most of Europe and the food has improved dramatically in the last decade.",
-    gallery: [
-      "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=600&h=380&fit=crop",
-      "https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=600&h=380&fit=crop",
-    ],
-    neighbourhoods: [
-      { name: "Valletta Proper", vibe: "The whole city is walkable — grand baroque buildings at every corner" },
-      { name: "Sliema", vibe: "Modern waterfront, shopping, sea swimming and the practical base for day trips" },
-      { name: "Marsaxlokk", vibe: "Southern fishing village, Sunday market and the freshest seafood on the island" },
-    ],
-  },
-  {
-    name: "Yogyakarta",
-    country: "Indonesia",
-    region: "Asia",
-    description: "Borobudur is 45 minutes away. That's already a reason to come.",
-    image: "https://images.unsplash.com/photo-1585468274952-66591eb14165?w=400&h=200&fit=crop",
-    detail: "Bali gets all the tourists. Yogyakarta gets the travellers. The sultan's palace, the silver workshops, the shadow puppet performances, and the volcano you can climb — all for a fraction of Bali's prices.",
-    gallery: [
-      "https://images.unsplash.com/photo-1588668214407-6ea9a6d8c272?w=600&h=380&fit=crop",
-      "https://images.unsplash.com/photo-1610010850404-c892d328cf86?w=600&h=380&fit=crop",
-    ],
-    neighbourhoods: [
-      { name: "Kraton (Palace Quarter)", vibe: "The sultan's palace complex, batik workshops and traditional shadow puppets" },
-      { name: "Prawirotaman", vibe: "Art district, boutique guesthouses, good food and a slower pace" },
-      { name: "Kota Gede", vibe: "Old silver town, Mataram ruins and traditional craft workshops" },
-    ],
-  },
-  {
-    name: "Riga",
-    country: "Latvia",
-    region: "Europe",
-    description: "The world's largest collection of Art Nouveau buildings. Almost nobody knows this.",
-    image: "https://images.unsplash.com/photo-1560177112-fbfd5fde9566?w=400&h=200&fit=crop",
-    detail: "Medieval old town, Soviet-era market halls, Art Nouveau streets, and a food scene that's been quietly excellent for years. Cheaper than Tallinn, more interesting than Vilnius. The locals will debate this.",
-    gallery: [
-      "https://images.unsplash.com/photo-1567669721460-221b82865ee0?w=600&h=380&fit=crop",
-      "https://images.unsplash.com/photo-1683730796330-06e60e3438d8?w=600&h=380&fit=crop",
-    ],
-    neighbourhoods: [
-      { name: "Old Town (Vecrīga)", vibe: "Medieval streets, the best-preserved old city in the Baltics" },
-      { name: "Art Nouveau District", vibe: "Alberta iela and the surrounding streets — architecture unlike anywhere else in Europe" },
-      { name: "Ķīpsala", vibe: "Island suburb across the Daugava river, quiet, local and great river views" },
-    ],
-  },
-  {
-    name: "Lisbon",
-    country: "Portugal",
-    region: "Europe",
-    description: "Everyone arrives expecting a city. They find a series of villages that happen to be next to each other.",
-    image: "https://images.unsplash.com/photo-1548707309-dcebeab9ea9b?w=400&h=200&fit=crop",
-    detail: "Seven hills, tram 28, half the price of Barcelona. Alfama for fado and history, Bairro Alto for nights that start at midnight, Belém for the things you have to see once. The food is better than people expect and the coffee is among the best in Europe.",
-    gallery: [
-      "https://images.unsplash.com/photo-1513735492246-483525079686?w=600&h=380&fit=crop",
-      "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=600&h=380&fit=crop",
-    ],
-    neighbourhoods: [
-      { name: "Alfama", vibe: "The old Moorish quarter — steep, labyrinthine, fado coming through restaurant doors after dark" },
-      { name: "Bairro Alto", vibe: "Students, bars, restaurants packed on narrow streets — the city's nightlife centre since the 1980s" },
-      { name: "Belém", vibe: "Pastéis de Belém, Jerónimos Monastery, the Monument to the Discoveries — all within a 10-minute walk" },
-    ],
-  },
-  {
-    name: "Hanoi",
-    country: "Vietnam",
-    region: "Asia",
-    description: "Louder, faster, and more interesting than people expect. The old town is still actually old.",
-    image: "https://images.unsplash.com/photo-1509030450996-dd1a26dda07a?w=400&h=200&fit=crop",
-    detail: "The French Quarter, the Old Quarter, and West Lake are three completely different cities side by side. Street food here is better than anywhere in Vietnam. The chaos makes sense after two days — cross the road slowly and confidently, the scooters will flow around you.",
-    gallery: [
-      "https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=600&h=380&fit=crop",
-      "https://images.unsplash.com/photo-1599571234909-29ed5d1321d6?w=600&h=380&fit=crop",
-    ],
-    neighbourhoods: [
-      { name: "Old Quarter", vibe: "36 traditional guild streets, each originally selling one thing — still mostly true today" },
-      { name: "French Quarter", vibe: "Wide boulevards, colonial architecture, better restaurants and Hoan Kiem Lake at the centre" },
-      { name: "Tay Ho (West Lake)", vibe: "Quieter residential neighbourhood around the lake — best coffee in the city, expat community" },
-    ],
-  },
-  {
-    name: "Cape Town",
-    country: "South Africa",
-    region: "Africa",
-    description: "The most dramatically beautiful city most people underestimate until they arrive.",
-    image: "https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=400&h=200&fit=crop",
-    detail: "The mountain, the ocean, the winelands 45 minutes away, and a food scene that has quietly become one of the best on the continent. The neighbourhoods are as different as cities. Stay in the City Bowl if you want everything walkable; Sea Point if you want the Atlantic on your doorstep.",
-    gallery: [
-      "https://images.unsplash.com/photo-1576485290814-1c72aa4bbb8e?w=600&h=380&fit=crop",
-      "https://images.unsplash.com/photo-1504497163765-fef5f0acca14?w=600&h=380&fit=crop",
-    ],
-    neighbourhoods: [
-      { name: "City Bowl", vibe: "The centre below Table Mountain — cafés, galleries, the Company's Garden, base for everything" },
-      { name: "De Waterkant", vibe: "Cobblestone streets, boutique hotels, Cape Quarter market — the best-kept neighbourhood secret" },
-      { name: "Sea Point", vibe: "Atlantic seaboard promenade — free tidal pools, local restaurants, better value than the Waterfront" },
-    ],
-  },
-  {
-    name: "Lima",
-    country: "Peru",
-    region: "Americas",
-    description: "The best food city in South America. It's not close.",
-    image: "https://images.unsplash.com/photo-1531968455001-5c5272a41129?w=400&h=200&fit=crop",
-    detail: "Ceviche, tiradito, causa, anticuchos — the street food alone justifies the flight. Barranco has the best nightlife and the most interesting streets. Most people stay in Miraflores because it's convenient and miss what makes Lima worth going to. At least eat in Barranco.",
-    gallery: [
-      "https://images.unsplash.com/photo-1526392060635-9d6019884377?w=600&h=380&fit=crop",
-      "https://images.unsplash.com/photo-1625244724120-1fd1d34d00f6?w=600&h=380&fit=crop",
-    ],
-    neighbourhoods: [
-      { name: "Barranco", vibe: "Artist's neighbourhood on the Pacific cliffs — bohemian bars, murals, the Bridge of Sighs" },
-      { name: "Miraflores", vibe: "Safe, convenient, pleasant and slightly soulless — good base, not the real Lima" },
-      { name: "Surquillo", vibe: "The local market district — where Lima's chefs actually shop, no tourist markup" },
-    ],
-  },
-]
-
-const regionCounts = regions.reduce((acc, r) => {
-  acc[r] = r === 'All'
-    ? featuredDestinations.length
-    : featuredDestinations.filter(d => d.region === r).length
-  return acc
-}, {} as Record<Region, number>)
-
-const bestTimeMap: Record<string, string> = {
-  "Bali":         "Apr – Oct",
-  "Paris":        "Apr – Jun, Sep – Nov",
-  "Tokyo":        "Mar – May, Oct – Nov",
-  "New York":     "Sep – Nov, Mar – May",
-  "Santorini":    "May – Oct",
-  "Dubai":        "Nov – Mar",
-  "Machu Picchu": "May – Sep",
-  "Sydney":       "Sep – Nov, Mar – May",
-  "Tbilisi":      "Apr – Jun, Sep – Oct",
-  "Medellín":     "Dec – Mar, Jul – Aug",
-  "Porto":        "Apr – Jun, Sep – Oct",
-  "Chiang Mai":   "Nov – Feb",
-  "Sarajevo":     "May – Sep",
-  "Oaxaca":       "Oct – Apr",
-  "Plovdiv":      "Apr – Jun, Sep – Oct",
-  "Kotor":        "May – Sep",
-  "Rome":         "Apr – Jun, Sep – Oct",
-  "Barcelona":    "May – Jun, Sep – Oct",
-  "Amsterdam":    "Apr – May, Sep – Oct",
-  "Singapore":    "Feb – Apr",
-  "Bangkok":      "Nov – Feb",
-  "Kyoto":        "Mar – May, Oct – Nov",
-  "Reykjavik":    "Jun – Aug, Oct – Mar",
-  "Buenos Aires": "Mar – May, Sep – Nov",
-  "Budapest":     "Apr – Jun, Sep – Oct",
-  "Hoi An":       "Feb – Apr, Aug – Sep",
-  "Mexico City":  "Mar – May, Oct – Dec",
-  "Cartagena":    "Dec – Apr",
-  "Split":        "May – Jun, Sep",
-  "Valletta":     "Mar – May, Oct – Nov",
-  "Yogyakarta":   "May – Sep",
-  "Riga":         "May – Sep",
-  "Lisbon":       "Mar – May, Sep – Nov",
-  "Hanoi":        "Oct – Apr",
-  "Cape Town":    "Nov – Mar",
-  "Lima":         "Dec – Apr",
-}
-
-const visitDurationMap: Record<string, string> = {
-  "Bali":         "7–14 days",
-  "Paris":        "3–5 days",
-  "Tokyo":        "5–7 days",
-  "New York":     "3–5 days",
-  "Santorini":    "3–5 days",
-  "Dubai":        "4–6 days",
-  "Machu Picchu": "3–5 days",
-  "Sydney":       "4–7 days",
-  "Tbilisi":      "4–7 days",
-  "Medellín":     "5–10 days",
-  "Porto":        "3–5 days",
-  "Chiang Mai":   "5–14 days",
-  "Sarajevo":     "3–4 days",
-  "Oaxaca":       "5–8 days",
-  "Plovdiv":      "2–3 days",
-  "Kotor":        "3–5 days",
-  "Rome":         "3–5 days",
-  "Barcelona":    "4–6 days",
-  "Amsterdam":    "3–4 days",
-  "Singapore":    "4–6 days",
-  "Bangkok":      "4–7 days",
-  "Kyoto":        "3–5 days",
-  "Reykjavik":    "5–7 days",
-  "Buenos Aires": "7–14 days",
-  "Budapest":     "3–5 days",
-  "Hoi An":       "3–5 days",
-  "Mexico City":  "5–8 days",
-  "Cartagena":    "3–5 days",
-  "Split":        "3–5 days",
-  "Valletta":     "2–3 days",
-  "Yogyakarta":   "4–6 days",
-  "Riga":         "2–3 days",
-  "Lisbon":       "4–6 days",
-  "Hanoi":        "3–5 days",
-  "Cape Town":    "5–8 days",
-  "Lima":         "3–5 days",
-}
-
 type Vibe = 'Beach' | 'City Break' | 'Culture' | 'Adventure' | 'Food'
 const allVibes: Vibe[] = ['Beach', 'City Break', 'Culture', 'Adventure', 'Food']
 
-const vibeMap: Record<string, Vibe[]> = {
-  'Bali':         ['Beach', 'Culture', 'Adventure'],
-  'Paris':        ['City Break', 'Culture', 'Food'],
-  'Tokyo':        ['City Break', 'Culture', 'Food'],
-  'New York':     ['City Break', 'Food', 'Culture'],
-  'Santorini':    ['Beach', 'City Break'],
-  'Dubai':        ['Beach', 'City Break', 'Adventure'],
-  'Machu Picchu': ['Adventure', 'Culture'],
-  'Sydney':       ['Beach', 'City Break', 'Adventure'],
-  'Rome':         ['Culture', 'Food', 'City Break'],
-  'Barcelona':    ['Beach', 'City Break', 'Food', 'Culture'],
-  'Amsterdam':    ['City Break', 'Culture'],
-  'Singapore':    ['City Break', 'Food', 'Culture'],
-  'Bangkok':      ['City Break', 'Food', 'Culture'],
-  'Kyoto':        ['Culture', 'City Break'],
-  'Reykjavik':    ['Adventure', 'City Break'],
-  'Buenos Aires': ['City Break', 'Food', 'Culture'],
-  'Tbilisi':      ['Culture', 'Food', 'City Break'],
-  'Medellín':     ['City Break', 'Culture', 'Adventure'],
-  'Porto':        ['City Break', 'Food', 'Culture'],
-  'Chiang Mai':   ['Culture', 'Adventure', 'Food'],
-  'Sarajevo':     ['Culture', 'City Break', 'Food'],
-  'Oaxaca':       ['Food', 'Culture', 'Adventure'],
-  'Plovdiv':      ['Culture', 'City Break'],
-  'Kotor':        ['Adventure', 'Beach', 'Culture'],
-  'Budapest':     ['City Break', 'Culture', 'Food'],
-  'Hoi An':       ['Beach', 'Culture', 'Food'],
-  'Mexico City':  ['City Break', 'Food', 'Culture'],
-  'Cartagena':    ['Beach', 'Culture', 'City Break'],
-  'Split':        ['Beach', 'Adventure', 'Culture'],
-  'Valletta':     ['Culture', 'City Break'],
-  'Yogyakarta':   ['Culture', 'Adventure'],
-  'Riga':         ['City Break', 'Culture'],
-  'Lisbon':       ['City Break', 'Culture', 'Food'],
-  'Hanoi':        ['City Break', 'Culture', 'Food', 'Adventure'],
-  'Cape Town':    ['Adventure', 'Beach', 'Culture'],
-  'Lima':         ['City Break', 'Culture', 'Food'],
-}
-
-const budgetMap: Record<string, '$' | '$$' | '$$$'> = {
-  'Bali': '$$', 'Paris': '$$$', 'Tokyo': '$$', 'New York': '$$$',
-  'Santorini': '$$$', 'Dubai': '$$$', 'Machu Picchu': '$$', 'Sydney': '$$$',
-  'Rome': '$$', 'Barcelona': '$$', 'Amsterdam': '$$$', 'Singapore': '$$$',
-  'Bangkok': '$', 'Kyoto': '$$', 'Reykjavik': '$$$', 'Buenos Aires': '$$',
-  'Tbilisi': '$', 'Medellín': '$', 'Porto': '$$', 'Chiang Mai': '$',
-  'Sarajevo': '$', 'Oaxaca': '$', 'Plovdiv': '$', 'Kotor': '$',
-  'Budapest': '$', 'Hoi An': '$', 'Mexico City': '$', 'Cartagena': '$',
-  'Split': '$$', 'Valletta': '$$', 'Yogyakarta': '$', 'Riga': '$',
-  'Lisbon': '$$', 'Hanoi': '$', 'Cape Town': '$$', 'Lima': '$',
-}
-
-const neighbourhoodTipsMap: Record<string, string[]> = {
-  'Bali:Ubud': ["Walk Tegallalang rice terraces before 8am — after that it's tour groups", "Avoid staying on Monkey Forest Road itself — too loud at night"],
-  'Bali:Seminyak': ["Merah Putih restaurant for a proper Balinese meal in a beautiful space", "The beach faces west — sunset here is worth doing once"],
-  'Bali:Canggu': ["Old Man's beach bar is the social hub, good for meeting people", "Rent a motorbike rather than taxis — it's how everyone gets around"],
-  'Paris:Le Marais': ["L'As du Fallafel on Rue des Rosiers is the real thing — eat it standing on the street", "Visit weekdays; weekend crowds in the Marais are brutal"],
-  'Paris:Saint-Germain': ["Café de Flore is for tourists; Café Procope on Rue de l'Ancienne Comédie is the real one", "Luxembourg Gardens are quieter than Tuileries and nicer to sit in"],
-  'Paris:Montmartre': ["Avoid restaurants immediately around Sacré-Cœur — walk two blocks south for actual Parisian prices", "Best view of Paris is from Square Louise Michel, not the basilica steps"],
-  'Tokyo:Shinjuku': ["Golden Gai has ~200 tiny bars — just pick one that looks interesting and walk in", "East side (Golden Gai) and west side (Omoide Yokocho) feel completely different — both worth a night"],
-  'Tokyo:Shibuya': ["The famous crossing is best from the Starbucks window above — less chaotic, better photos", "Yoyogi Park is 10 minutes from Harajuku station; go Sunday afternoon"],
-  'Tokyo:Yanaka': ["Yanaka Ginza shopping street is one of the few places in Tokyo that feels pre-war", "The cemetery here is surprisingly beautiful and worth walking through"],
-  'New York:Midtown': ["Stay here if you need to — but eat elsewhere. Walk to Hell's Kitchen for real food", "The High Line is most enjoyable 7–9am before it fills up"],
-  'New York:Williamsburg': ["Take the L train from Manhattan — 15 minutes and a completely different city", "Walk north toward Greenpoint from Bedford Ave for fewer tourists"],
-  'New York:Lower East Side': ["Russ & Daughters on Houston St for bagels — the original, not the cafe version", "Most bars don't get going until midnight. Plan accordingly."],
-  'Santorini:Oia': ["Book sunset restaurants at least a week ahead — everyone is trying to eat at the same time", "Walk the path from Fira to Oia (10km) — the best views are along the way, not just at the end"],
-  'Santorini:Fira': ["Better for nightlife and eating than Oia — far fewer tourists staying here", "The cable car down to the old port is fine; the donkeys are faster but be prepared"],
-  'Santorini:Imerovigli': ["Skaros Rock walk starts here — 45 minutes return, no crowds, best caldera view on the island", "Quietest of the three main towns; restaurants are mostly hotel-only which is a disadvantage"],
-  'Dubai:Downtown': ["Book Burj Khalifa observation deck online in advance — the in-person queue is hours long", "Dubai Fountain show is free and runs every 30 minutes after 6pm"],
-  'Dubai:Jumeirah Beach': ["Public beach at JBR Walk is free — no need to pay for a hotel beach", "Walk The Walk outdoor mall for evening dining — cooler than going inside"],
-  'Dubai:Al Fahidi': ["The Dubai Museum is one of the cheapest and best in the city", "Take an Abra (wooden boat) across the Creek for 1 AED — one of the best things in Dubai"],
-  'Machu Picchu:Aguas Calientes': ["Book the bus to the ruins in advance — the 4am queue is long enough without waiting for tickets", "Train from Cusco to here is the experience; don't take the bus option"],
-  'Machu Picchu:Inca Trail': ["Permits sell out months in advance — book before you book your flights", "Day 2 is the hardest. Day 3 through the Sun Gate is the payoff."],
-  'Machu Picchu:Cusco': ["Spend at least 2 nights acclimatising before attempting altitude hikes", "San Pedro Market is for locals; Mercado Central is for tourists — both worth visiting"],
-  'Sydney:Circular Quay': ["The Manly ferry is the best $5 you'll spend — 30 minutes of harbour views", "Opera House tours are worth it; the building is better inside than outside"],
-  'Sydney:Bondi': ["Walk the coastal path to Bronte and Coogee — far less crowded than Bondi Beach", "Icebergs pool is a Sydney institution; swim early morning for the full experience"],
-  'Sydney:Surry Hills': ["Crown Street has the best independent coffee and food in Sydney", "Bills on Crown Street for breakfast — the ricotta pancakes are exactly what people say they are"],
-  'Rome:Trastevere': ["Eat before 7:30pm or after 9pm to avoid the tourist dinner rush completely", "Da Enzo al 29 — cash only, no reservations, queue outside. Worth it."],
-  'Rome:Prati': ["Best gelato in Rome: Fatamorgana on Via Laurina — unusual flavours done properly", "Walk to Castel Sant'Angelo along the river at sunset — almost nobody does this"],
-  'Rome:Testaccio': ["Flavio al Velavevodetto for cacio e pepe — not tourist-facing, proper Roman trattoria", "The non-Catholic cemetery here has Keats and Shelley's graves and is unexpectedly beautiful"],
-  'Barcelona:Eixample': ["Cervecería Catalana on Mallorca Street for the best pintxos in the city", "Book Sagrada Família weeks ahead — the ticket queue is not something you want to experience"],
-  'Barcelona:Gràcia': ["Plaça del Sol for evening aperitivo — sit on the steps with locals", "The Gràcia Festival in August turns the entire neighbourhood into a street party"],
-  'Barcelona:Barceloneta': ["El Vaso de Oro — tiny standing bar on Carrer de Balboa. Order the beer and anything fried.", "Get there by 10am in summer. By 11am the beach is a wall-to-wall crowd."],
-  'Amsterdam:Jordaan': ["Winkel 43 for the apple pie — eat it warm with cream outside on the canal", "Anne Frank House tickets sell out 2+ months ahead; book the moment you know your dates"],
-  'Amsterdam:De Pijp': ["Saturday Albert Cuyp Market for street food — best in the city", "Brouwerij 't IJ craft brewery is in an actual working windmill"],
-  'Amsterdam:Centrum': ["Walk through the Red Light District once — don't photograph the workers", "De Drie Fleschjes brown café on Gravenstraat for Dutch jenever — over 300 years old"],
-  'Singapore:Orchard Road': ["ION Orchard basement food court is the best value eating in the city", "Avoid Orchard Road on weekends if you're shopping — go on a weekday"],
-  'Singapore:Chinatown': ["Maxwell Food Centre for chicken rice — Tian Tian stall has the queue and deserves it", "Sri Mariamman Temple is the oldest in Singapore and free to enter"],
-  'Singapore:East Coast': ["Jumbo Seafood for chilli crab — order the mantou buns to soak up the sauce", "East Coast Park is where Singaporeans actually go on weekends; rent a bike"],
-  'Bangkok:Sukhumvit': ["Terminal 21 mall food court for cheap, actually good food — ignore the shopping", "Thonglor and Ekkamai (BTS stops past Asok) are where the real Bangkok nightlife is"],
-  'Bangkok:Riverside': ["Take the Chao Phraya Express boat everywhere — faster than a taxi and a quarter of the price", "Wat Pho is better than the Grand Palace — fewer crowds, more interesting, real monks"],
-  'Bangkok:Chatuchak': ["Go Saturday or Sunday morning — by midday it's too hot to function", "Section 2–3 for vintage clothing, section 8–9 for antiques"],
-  'Kyoto:Higashiyama': ["Most temples charge ¥500–700 entry — budget that into the day", "Walk the Philosopher's Path north to south in cherry blossom season — first week of April"],
-  'Kyoto:Gion': ["Hanamikoji Street on a Tuesday or Wednesday evening — geisha visible around 6pm", "Don't photograph geisha without permission or try to stop them for photos"],
-  'Kyoto:Arashiyama': ["Bamboo Grove is best at 7am before tour groups arrive. After 9am it's crowded regardless.", "Tenryu-ji garden is worth the extra ¥500 for the sub-garden — one of the best in Japan"],
-  'Reykjavik:101 Reykjavik': ["The hot dog stand by the harbour (Bæjarins Beztu) — cash only, been there since 1937", "Laugavegur Street for everything in the evening — eat at Snaps bistro for local fish"],
-  'Reykjavik:Grandi': ["Sægreifinn (Sea Baron) for the best lobster soup in Iceland for about $10", "Whale watching from the Old Harbour — book Elding tours, most reliable operators"],
-  'Reykjavik:Laugardalur': ["Laugardalslaug public pool — huge thermal complex for about $9, where Icelanders actually swim", "Árbær Open Air Museum gives real context for how Icelanders lived 100 years ago"],
-  'Buenos Aires:Palermo': ["Don Julio parrilla for steak — arrive when it opens at noon to avoid the 2-hour queue", "Rent a bike from the Palermo Chico cycle stations for the parks"],
-  'Buenos Aires:San Telmo': ["Sunday Feria de San Telmo market — go early before 11am", "Bar Sur on Estados Unidos for tango — small, authentic, not a show for tourists"],
-  'Buenos Aires:Recoleta': ["The cemetery is free and takes 2 hours to walk properly — Evita's tomb is well-signposted", "La Biela café across from the cemetery has been serving coffee for 70+ years"],
-  'Tbilisi:Old Town': ["Sulphur baths in Abanotubani — Chreli Abano is the best value public bath at about $5", "Walk up to Narikala Fortress in the evening for the best view over the city"],
-  'Tbilisi:Fabrika': ["Good for coffee in the morning, cocktails in the evening — the courtyard fills after 8pm", "The hostel inside is one of the best in the city even if you're not staying there"],
-  'Tbilisi:Vera': ["Entree restaurant on Tsereteli Ave — Georgian food done properly without tourist markup", "The Botanical Garden is a 20-minute walk from Fabrika through the old town"],
-  'Medellín:El Poblado': ["Pergamino for the best coffee in the city — Colombian beans done properly", "Parque Lleras fills after 10pm — the surrounding streets have better bars with fewer tourists"],
-  'Medellín:Laureles': ["Better local food and about 30% cheaper than El Poblado for accommodation", "Ruta N area for coworking and speciality coffee if you're working remotely"],
-  'Medellín:La Candelaria': ["Take the Metrocable to Comunas 13 for street art — go with a guide, not solo", "Plaza Botero has the famous Botero sculptures and is completely free"],
-  'Porto:Ribeira': ["Tasca do Chico for fado — tiny, book in advance, one of the last authentic fado restaurants in Portugal", "Walk across Dom Luís Bridge to Vila Nova de Gaia for port wine tasting — the cellars are free to tour"],
-  'Porto:Bonfim': ["Mercado do Bolhão for produce and local life — better than any tourist market", "Cantina 32 for creative Portuguese food at reasonable prices"],
-  'Porto:Foz do Douro': ["Matosinhos is a 30-minute walk along the coast — best grilled fish restaurants in the region", "Sunset at the Atlantic from Praia de Matosinhos is one of the best in Portugal"],
-  'Chiang Mai:Old City': ["Warorot Market (Kad Luang) for local produce and cheap textiles — better value than the Night Bazaar", "A cooking class here is worth half a day — pick one that visits the market first"],
-  'Chiang Mai:Nimman': ["Ristr8to espresso bar for the coffee — obsessive about quality, small menu", "Maya Mall rooftop at sunset before hitting the bars on the lower floors"],
-  'Chiang Mai:Riverside': ["Long boat tours along the Ping River run until dark and cost about $3", "The Good View restaurant — order the sai ua (northern sausage)"],
-  'Sarajevo:Baščaršija': ["Ćevapi at Petica — the original spot, one of the oldest restaurants in the city", "Walk across the Latin Bridge — this is where Franz Ferdinand was assassinated in 1914"],
-  'Sarajevo:Grbavica': ["Klub Kulture Kriterion is the best bar in the city — in a renovated cinema", "Kibe Mahala neighbourhood market on Saturday mornings — all local, no tourists"],
-  'Sarajevo:Ilidža': ["Vrelo Bosne park — the spring source of the Bosna river, rent a horse-drawn carriage", "Terme Federal Hotel spa is open to non-guests for day use — thermal pools at low prices"],
-  'Oaxaca:Centro Histórico': ["Mercado 20 de Noviembre for tlayudas and memelas — eat at the market, not the surrounding restaurants", "Museo de las Culturas de Oaxaca inside the Santo Domingo complex is free and genuinely excellent"],
-  'Oaxaca:Jalatlaco': ["Casa Oaxaca restaurant — book ahead and eat on the terrace", "Best visited at 7am before tour groups arrive from the hotels"],
-  'Oaxaca:Xochimilco': ["El Pochote organic market on Fridays for the best produce in the city", "Local mezcal bars here charge local prices — half what you'd pay in Centro"],
-  'Plovdiv:Old Town': ["Visit during the Lampartite light festival in December — the whole old town becomes a gallery", "The Kapana (the Trap) creative quarter is separate from the Old Town but a 5-minute walk"],
-  'Plovdiv:Kapana': ["Bar 4 on Bratya Pulevi for natural wine — small bar, excellent selection, no tourist pricing", "Friday and Saturday evenings the whole district comes alive — skip it during the day, go at night"],
-  'Plovdiv:Kširšiyaka': ["Trud Market on Saturday mornings for produce and secondhand finds", "Café One for breakfast — run by locals, prices haven't changed in years"],
-  'Kotor:Stari Grad': ["Walk the fortress walls in the early morning — 1,300 steps but the views are worth every one", "Konoba Cattaro on Trg od Salate for grilled fish — inside the walls, no tourist markup"],
-  'Kotor:Dobrota': ["Stari Mlini restaurant right on the water — one of the best meals in Montenegro for reasonable money", "Rent a car or scooter — the bay road north toward Perast is one of the most beautiful drives in the Adriatic"],
-  'Kotor:Prčanj': ["Gospa od Anđela church dates to 1420 — almost never has visitors despite being remarkable", "Swim from the rocks below the main road — clear water and usually empty in early morning"],
-  'Budapest:District VII': ["Szimpla Kert is the original ruin bar and still the best — go on Sunday for the farmers market inside", "Kadár étkezde on Klauzál Square for authentic Jewish-Hungarian lunch — no dinner service, cash only"],
-  'Budapest:Buda Castle': ["Visit the castle on a Monday when most museums in Pest are closed", "The funicular up from Clark Ádám Square costs about $5 — not necessary but a nice way up"],
-  'Budapest:District IX': ["Bálna Budapest cultural centre for views over the Danube — go for the terrace, skip the restaurant", "Hold Utca Market Hall for the freshest produce with far fewer tourists than the Great Market Hall"],
-  'Hoi An:Ancient Town': ["Go at dawn — by 9am it's shoulder-to-shoulder. The lanterns are lit regardless of the hour.", "Get measured for custom clothing on Day 1 — 24-hour turnaround but you'll want fitting time"],
-  'Hoi An:An Bang Beach': ["Soul Kitchen beach club for sunset — better food and more relaxed than the Ancient Town restaurants", "Bike from the Ancient Town in 20 minutes along the river road"],
-  'Hoi An:Cam Nam Island': ["Cross the footbridge at the south end of the Ancient Town — 5-minute walk to a completely different world", "Morning market on the island runs until 8am — some of the cheapest local food in the area"],
-  'Mexico City:Roma Norte': ["Contramar for fish — queue or book, do not skip it", "Walk Álvaro Obregón avenue in the evening for the best people watching and street food"],
-  'Mexico City:Condesa': ["Parque México is the social hub — sit, eat, watch people walk their dogs", "El Parnita for weekend brunch — local crowd, no tourists, excellent mezcal selection"],
-  'Mexico City:Centro Histórico': ["Palacio de Bellas Artes free entry Sunday mornings — Diego Rivera murals inside worth seeing alone", "Café de Tacuba on Tacuba Street — founded 1912, still using the original recipes"],
-  'Cartagena:Ciudad Amurallada': ["La Cevichería for ceviche — small, book ahead, the best in the city by some distance", "Walk the walls at sunset: start from Baluarte de San Francisco Javier and walk the full circuit"],
-  'Cartagena:Getsemaní': ["El Santísimo for cocktails — the neighbourhood's best bar, always full after 9pm", "La Movida street food from vendors in Parque Getsemaní after 7pm — cheaper and better than most restaurants"],
-  'Cartagena:Bocagrande': ["Skip it unless you specifically want a beach resort vibe far from the city's character", "If you do go, the beach at Laguito is better than the main Bocagrande strip"],
-  'Split:Diocletian\'s Palace': ["The basement halls (entrance from Peristyle) are free and mostly ignored by tourists", "Eat at Fife on Trogirska Street — cash only, standing room only at lunch, genuinely local"],
-  'Split:Bačvice': ["Picigin — the local beach ball game is played here every morning. Join in if you want.", "The bars close around 1am and the beach stays busy until then in summer"],
-  'Split:Varoš': ["Stari Grad restaurant on Aljinovića for Dalmatian food without the palace premium", "The highest point gives views over the palace rooftops — unmarked path, worth finding"],
-  'Valletta:Valletta Proper': ["Upper Barrakka Gardens for the 12 noon cannon firing — free, spectacular, takes 2 minutes", "Trabuxu Bistro in Strait Street for the best wine list in Malta"],
-  'Valletta:Sliema': ["Exiles Beach for swimming — concrete lido, free to use, far better than any paid beach", "Walk one block inland from The Strand restaurants for local prices"],
-  'Valletta:Marsaxlokk': ["Sunday market starts at 7am and winds down by 10am — don't arrive after that", "Ir-Rizzu restaurant right on the harbour for the freshest fish on the island"],
-  'Yogyakarta:Kraton': ["The palace interior has restricted access — the outer grounds are free and worth an hour", "Batik workshops on Jalan Tirtodipuran: watch the process and buy direct from the maker"],
-  'Yogyakarta:Prawirotaman': ["ViaVia café is the neighbourhood hub — good food, notice board for local events and tours", "Most guesthouses here will organise a driver to Borobudur for sunrise — book the night before"],
-  'Yogyakarta:Kota Gede': ["Silver workshops still do everything by hand — you can watch the process for free and buy at source", "The old royal cemetery at Imogiri is 20 minutes south and rarely visited"],
-  'Riga:Old Town (Vecrīga)': ["Ēdnīca Lāčplēsis on Lāčplēša iela for Latvian home-style food at Soviet cafeteria prices — it's excellent", "St. Peter's Church tower for the best views over the old town — lift costs €9"],
-  'Riga:Art Nouveau District': ["The Art Nouveau Museum at Alberta 12 shows the interiors — mandatory if you're walking the street", "Most buildings are still residential — ring the bell on any unlocked door to look at the entrance halls"],
-  'Riga:Ķīpsala': ["Walk across the Vanšu Bridge and follow the river embankment — quiet, local, tourist-free", "Lido at Ķīpsala is the largest Latvian food hall in the country — cheap, excellent, open all day"],
-  'Lisbon:Alfama': ["Take tram 28 through — the whole route costs €3 and is the best tour of the city", "Fado at Tasca do Chico: small, authentic, book weeks ahead"],
-  'Lisbon:Bairro Alto': ["Cervejaria da Trindade for craft beer in a 13th-century convent — one of the strangest and best bars in Portugal", "Eat before 10pm if you want a seat without queuing"],
-  'Lisbon:Belém': ["Pastéis de Belém: the original, the recipe is secret, the queue moves fast — order six", "Jerónimos Monastery is free on Sunday mornings before 2pm"],
-  'Hanoi:Old Quarter': ["Bún chả at Bún Chả Hương Liên — the place Obama ate. It's genuinely worth it.", "Street addresses in the Old Quarter are often wrong — navigate by landmark and phone"],
-  'Hanoi:French Quarter': ["Long Train Street — coffee bars appeared for the spectacle of trains passing 30cm from tables", "KOTO restaurant for Vietnamese food with a social enterprise element — good cause, better food"],
-  'Hanoi:Tay Ho (West Lake)': ["Cafe Giang on Nguyen Huu Huan for egg coffee — invented here in the 1940s", "Cycle around the lake in early morning before the city wakes up"],
-  'Cape Town:City Bowl': ["Truth Coffee Brewing on Buitenkant St — extreme coffee obsessives, excellent", "Walk up Lion's Head at sunrise — 2 hours, no guide needed, views that rival Table Mountain"],
-  'Cape Town:De Waterkant': ["Biscuit Mill in Woodstock (10 mins away) for the Saturday market — the city's best food market", "The Waterfront is the tourist thing; De Waterkant is where Cape Town actually eats and drinks"],
-  'Cape Town:Sea Point': ["Olympic Pool at Sea Point Pavilion — 50m outdoor pool on the Atlantic for about $3", "La Perla on Beach Road for calamari and wine on the terrace — been there since 1952"],
-  'Lima:Barranco': ["Central restaurant (usually on the world's best restaurant lists) — book months ahead", "La Noche bar on Bolognesi Street for live music after 10pm — the neighbourhood's institution"],
-  'Lima:Miraflores': ["Huaca Pucllana — a real Inca pyramid in the middle of a suburb, lit up at night", "Larcomar mall is worth visiting for the Pacific cliff views — the mall itself is irrelevant"],
-  'Lima:Surquillo': ["Mercado N°1 de Surquillo: buy ceviche ingredients from the same stalls the chefs use", "Isolina on Av. San Martín for criollo cooking — less glamorous than Central, just as good"],
-}
-
-// Neighbourhood recommendation map.
-// Array of 4 neighbourhood indices for each answer combo: [lively+central, lively+local, relaxed+central, relaxed+local]
 const neighRecoMap: Record<string, [number, number, number, number]> = {
   'Bali':         [1, 2, 0, 0],
   'Paris':        [0, 2, 1, 2],
@@ -1064,8 +201,8 @@ const quizScoring: Record<string, number>[][] = [
   ],
 ]
 
-function getQuizResults(answers: number[], featured: Destination[], affordable: Destination[]): Destination[] {
-  const all = [...featured, ...affordable]
+function getQuizResults(answers: number[], destinations: Destination[]): Destination[] {
+  const all = destinations
   const scores: Record<string, number> = {}
   all.forEach(d => { scores[d.name] = 0 })
   answers.forEach((ansIdx, qIdx) => {
@@ -1083,7 +220,7 @@ function getQuizExplanation(dest: Destination, answers: number[]): string {
   const vibe = vibes[answers[0]] ?? 'overall feel'
   const priority = priorities[answers[1]] ?? 'what it offers'
   const budget = budgetLabels[answers[2]]
-  const budgetBracket = budgetMap[dest.name]
+  const budgetBracket = dest.budget_level
   const budgetMatch = (answers[2] === 0 && budgetBracket === '$') || (answers[2] === 2 && budgetBracket === '$$$') || (answers[2] === 1 && budgetBracket === '$$')
   return budgetMatch
     ? `Matched for ${vibe}, ${priority}, and ${budget}.`
@@ -1226,15 +363,15 @@ function DestinationCard({
         {isBeenThere && <span className="card-been-badge">✓ Been here</span>}
         <div className="card-image-hover">
           <p className="card-image-hover-text">
-            {dest.neighbourhoods.map(n => n.name).join(' · ')}
+            {(dest.neighbourhoods ?? []).map(n => n.name).join(' · ')}
           </p>
         </div>
       </div>
       <div className="card-body">
         <div className="card-meta">
           <span className="card-region-tag" style={regionColors[dest.region] ?? {}}>{dest.region}</span>
-          {budgetMap[dest.name] && (
-            <span className={`card-budget-tag budget-${budgetMap[dest.name].length}`}>{budgetMap[dest.name]}</span>
+          {dest.budget_level && (
+            <span className={`card-budget-tag budget-${dest.budget_level.length}`}>{dest.budget_level}</span>
           )}
         </div>
         <h3 className="card-city">{dest.name}</h3>
@@ -1243,8 +380,8 @@ function DestinationCard({
           className={`card-description${descExpanded ? ' expanded' : ''}`}
           onClick={(e) => { e.stopPropagation(); setDescExpanded(v => !v) }}
         >{dest.description}</p>
-        {bestTimeMap[dest.name] && (
-          <span className="card-season-tag">◐ {bestTimeMap[dest.name]}</span>
+        {dest.best_time && (
+          <span className="card-season-tag">◐ {dest.best_time}</span>
         )}
         <div className="card-actions">
           <button className="card-btn" onClick={(e) => { e.stopPropagation(); onView() }}>View →</button>
@@ -1339,6 +476,57 @@ function App() {
   const modalRef = useRef<HTMLDivElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const newTripIdRef = useRef<string | null>(null)
+  // Connection to backend destinations
+  const [featuredDestinations, setFeaturedDestinations] = useState<Destination[]>([])
+  const [affordableDestinations, setAffordableDestinations] = useState<Destination[]>([])
+
+  useEffect(() => {
+    fetch(`${apiBase}/api/destinations`)
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`Failed to load destinations: ${res.status}`)
+        }
+
+        return res.json()
+      })
+      .then((data: Destination[]) => {
+        const normalizedData = data.map((destination) => ({
+          ...destination,
+          best_time: destination.best_time ?? null,
+          visit_duration: destination.visit_duration ?? null,
+          budget_level: destination.budget_level ?? null,
+          vibes: destination.vibes ?? [],
+          neighbourhoods: (destination.neighbourhoods ?? []).map(neighbourhood => ({
+            ...neighbourhood,
+            tips: neighbourhood.tips ?? [],
+          })),
+          gallery: destination.gallery ?? [],
+        }))
+
+        setFeaturedDestinations(normalizedData)
+
+        setAffordableDestinations(
+          normalizedData.filter(
+            destination => destination.budget_level === '$'
+          )
+        )
+      })
+      .catch((error) => {
+        console.error('Destination error:', error)
+      })
+  }, [])
+
+    const regionCounts = regions.reduce((acc, region) => {
+      acc[region] =
+        region === 'All'
+          ? featuredDestinations.length
+          : featuredDestinations.filter(
+              destination => destination.region === region
+            ).length
+
+      return acc
+    }, {} as Record<Region, number>)
+
 
   // Scroll detection + progress bar
   useEffect(() => {
@@ -1418,6 +606,9 @@ function App() {
     if (selected) { setActiveModalImg(null); setModalScrollProgress(0); if (modalRef.current) modalRef.current.scrollTop = 0 }
     if (!selected) return () => { document.body.style.overflow = '' }
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') closeModal() }
+
+
+
     document.addEventListener('keydown', onKey)
     return () => {
       document.body.style.overflow = ''
@@ -1455,7 +646,7 @@ function App() {
     const params = new URLSearchParams(window.location.search)
     const slug = params.get('dest')
     const savedParam = params.get('saved')
-    const allDests = [...featuredDestinations, ...affordableDestinations]
+    const allDests = featuredDestinations
     if (slug) {
       const dest = allDests.find(d => toSlug(d.name) === slug)
       if (dest) viewDest(dest)
@@ -1537,7 +728,7 @@ function App() {
       setQuizStep(s => s + 1)
     } else {
       setQuizAnswers(newAnswers)
-      setQuizResults(getQuizResults(newAnswers, featuredDestinations, affordableDestinations))
+      setQuizResults(getQuizResults(newAnswers, featuredDestinations))
     }
   }
 
@@ -1557,7 +748,7 @@ function App() {
 
     // Search all local destinations first (name, country, or region match)
     const q = query.toLowerCase()
-    const allDests = [...featuredDestinations, ...affordableDestinations]
+    const allDests = featuredDestinations
     const localMatches = allDests.filter(d =>
       d.name.toLowerCase().includes(q) ||
       d.country.toLowerCase().includes(q) ||
@@ -1625,7 +816,7 @@ function App() {
 
   function tripTotalDays(destNames: string[]): number {
     return destNames.reduce((sum, name) => {
-      const range = visitDurationMap[name] ?? ''
+      const range = allDestinations.find(destination => destination.name === name)?.visit_duration ?? ''
       const match = range.match(/(\d+)[–\-](\d+)/)
       if (match) return sum + Math.round((parseInt(match[1]) + parseInt(match[2])) / 2)
       const single = range.match(/(\d+)/)
@@ -1696,10 +887,10 @@ function App() {
 
   const filteredDestinations = featuredDestinations
     .filter(d => activeFilter === 'All' || d.region === activeFilter)
-    .filter(d => activeVibe === 'All' || (vibeMap[d.name] ?? []).includes(activeVibe))
+    .filter(d => activeVibe === 'All' || d.vibes.includes(activeVibe))
     .filter(d => !exploreSearch.trim() || d.name.toLowerCase().includes(exploreSearch.toLowerCase()) || d.country.toLowerCase().includes(exploreSearch.toLowerCase()))
 
-  const allDestinations = [...featuredDestinations, ...affordableDestinations]
+  const allDestinations = featuredDestinations
   const savedDestinations = savedOrder
     .filter(name => saved.has(name))
     .map(name => allDestinations.find(d => d.name === name))
@@ -1851,15 +1042,15 @@ function App() {
 
       {/* ── Compare modal ── */}
       {compareOpen && compareItems.length === 2 && (() => {
-        const allDests = [...featuredDestinations, ...affordableDestinations]
+        const allDests = featuredDestinations
         const [a, b] = compareItems.map(name => allDests.find(d => d.name === name)).filter((d): d is Destination => !!d)
         if (!a || !b) return null
         const rows: { label: string; a: string; b: string }[] = [
           { label: 'Region', a: a.region, b: b.region },
-          { label: 'Budget', a: budgetMap[a.name] ?? '—', b: budgetMap[b.name] ?? '—' },
-          { label: 'Best time', a: bestTimeMap[a.name] ?? '—', b: bestTimeMap[b.name] ?? '—' },
-          { label: 'Visit length', a: visitDurationMap[a.name] ?? '—', b: visitDurationMap[b.name] ?? '—' },
-          { label: 'Vibes', a: (vibeMap[a.name] ?? []).join(', ') || '—', b: (vibeMap[b.name] ?? []).join(', ') || '—' },
+          { label: 'Budget', a: a.budget_level ?? '—', b: b.budget_level ?? '—' },
+          { label: 'Best time', a: a.best_time ?? '—', b: b.best_time ?? '—' },
+          { label: 'Visit length', a: a.visit_duration ?? '—', b: b.visit_duration ?? '—' },
+          { label: 'Vibes', a: a.vibes.join(', ') || '—', b: b.vibes.join(', ') || '—' },
           { label: 'Stay in', a: a.neighbourhoods.map(n => n.name).join(', '), b: b.neighbourhoods.map(n => n.name).join(', ') },
         ]
         return (
@@ -1991,8 +1182,8 @@ function App() {
               <h2 className="modal-title">{selected.name}</h2>
               <div className="modal-chips">
                 <span className="modal-region-chip">{selected.region}</span>
-                {visitDurationMap[selected.name] && (
-                  <span className="modal-duration-chip">{visitDurationMap[selected.name]}</span>
+                {selected.visit_duration && (
+                  <span className="modal-duration-chip">{selected.visit_duration}</span>
                 )}
               </div>
               {destFitMap[selected.name] && (
@@ -2038,7 +1229,7 @@ function App() {
                 return (
                   <div className="modal-neighbourhoods">
                     {selected.neighbourhoods.map((n, i) => {
-                      const tips = neighbourhoodTipsMap[`${selected.name}:${n.name}`] ?? []
+                      const tips = n.tips
                       const isRec = neighReco === i
                       return (
                         <div className={`modal-neighbourhood${isRec ? ' neigh-recommended' : ''}`} key={n.name} style={{ animationDelay: `${i * 90}ms` }}>
@@ -2214,7 +1405,7 @@ function App() {
           ) : (
             <div className="cards-grid">
               {results.map((city, i) => {
-                const known = [...featuredDestinations, ...affordableDestinations].find(d => d.name.toLowerCase() === city.name.toLowerCase())
+                const known = featuredDestinations.find(d => d.name.toLowerCase() === city.name.toLowerCase())
                 if (known) {
                   return (
                     <DestinationCard
@@ -2481,8 +1672,8 @@ function App() {
                           <div className="trip-dest-info" onClick={() => viewDest(d)} style={{ cursor: 'pointer' }}>
                             <span className="trip-dest-name">{d.name}</span>
                             <span className="trip-dest-country">{d.country}</span>
-                            {visitDurationMap[d.name] && (
-                              <span className="trip-dest-duration">{visitDurationMap[d.name]}</span>
+                            {d.visit_duration && (
+                              <span className="trip-dest-duration">{d.visit_duration}</span>
                             )}
                           </div>
                           <button className="trip-dest-remove" onClick={() => removeDestFromTrip(trip.id, d.name)} aria-label="Remove">✕</button>
