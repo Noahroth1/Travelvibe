@@ -8,9 +8,11 @@ from app.routes.trips import router as trips_router
 
 from app.database import Base, engine
 from app import models
+from app.logging_config import configure_logging
 
 app = FastAPI(title="Travel Vibe API", version="0.1.0")
 
+configure_logging()
 Base.metadata.create_all(bind=engine)
 
 app.add_middleware(

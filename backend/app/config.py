@@ -8,5 +8,10 @@ class Settings(BaseSettings):
 
     database_url: str | None = None
 
+    def __init__(self, **values):
+        super().__init__(**values)
+        if not self.database_url:
+            self.database_url = "sqlite:///./travelvibe.db"
+
 
 settings = Settings()
