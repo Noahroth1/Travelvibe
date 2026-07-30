@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.routes.auth import router as auth_router
 from app.routes.cities import router as cities_router
 from app.routes.destinations import router as destinations_router
 from app.config import settings
@@ -26,6 +27,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(auth_router)
 app.include_router(cities_router)
 app.include_router(destinations_router)
 app.include_router(trips_router)
