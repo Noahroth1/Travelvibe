@@ -2,7 +2,7 @@
 from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class NeighbourhoodResponse(BaseModel):
@@ -29,9 +29,46 @@ class DestinationResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class TripStop(BaseModel):
+    destination: str = Field(min_length=1, max_length=100)
+    days: int = Field(default=1, ge=1, le=60)
+    neighbourhood: str | None = Field(default=None, max_length=100)
+
+
 class TripCreate(BaseModel):
     name: str = Field(min_length=1, max_length=100)
     travel_date: str | None = Field(default=None, max_length=50)
+    destinations: list[TripStop] = Field(default_factory=list)
+
+    @field_validator("destinations", mode="before")
+    @classmethod
+    def upgrade_legacy_destinations(cls, value):
+        if not isinstance(value, list):
+            return value
+        return [
+            {"destination": item, "days": 1, "neighbourhood": None}
+            if isinstance(item, str)
+            else item
+            for item in value
+        ]
+
+
+class TripUpdate(BaseModel):
+    name: str | None = Field(default=None, min_length=1, max_length=100)
+    travel_date: str | None = Field(default=None, max_length=50)
+    destinations: list[TripStop] | None = None
+
+    @field_validator("destinations", mode="before")
+    @classmethod
+    def upgrade_legacy_destinations(cls, value):
+        if value is None or not isinstance(value, list):
+            return value
+        return [
+            {"destination": item, "days": 1, "neighbourhood": None}
+            if isinstance(item, str)
+            else item
+            for item in value
+        ]
 
 
 class TripResponse(TripCreate):
@@ -39,3 +76,16 @@ class TripResponse(TripCreate):
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class UserStateUpdate(BaseModel):
+    saved_order: list[str] = Field(default_factory=list)
+    notes: dict[str, str] = Field(default_factory=dict)
+    been_there: list[str] = Field(default_factory=list)
+    recently_viewed: list[str] = Field(default_factory=list)
+    dark_mode: bool = False
+    layout_mode: Literal["grid", "list"] = "grid"
+
+
+class UserStateResponse(UserStateUpdate):
+    initialized: bool = True

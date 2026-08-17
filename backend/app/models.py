@@ -10,9 +10,24 @@ class Trip(Base):
     __tablename__ = "trips"
 
     id = Column(Integer, primary_key=True, index=True)
+    owner_id = Column(String(255), nullable=True, index=True)
     name = Column(String(100), nullable=False)
     travel_date = Column(String(50), nullable=True)
+    destinations = Column(JSONB, nullable=False, default=list)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class UserState(Base):
+    __tablename__ = "user_states"
+
+    owner_id = Column(String(255), primary_key=True)
+    saved_order = Column(JSONB, nullable=False, default=list)
+    notes = Column(JSONB, nullable=False, default=dict)
+    been_there = Column(JSONB, nullable=False, default=list)
+    recently_viewed = Column(JSONB, nullable=False, default=list)
+    dark_mode = Column(Integer, nullable=False, default=0)
+    layout_mode = Column(String(10), nullable=False, default="grid")
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
 class Destination(Base):

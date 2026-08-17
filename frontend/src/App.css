@@ -101,6 +101,13 @@ html {
   background: #261e3a;
 }
 
+.dark-mode .trip-stop-field input,
+.dark-mode .trip-stop-field select {
+  background: var(--bg-card);
+  border-color: var(--border);
+  color: var(--text-primary);
+}
+
 .dark-mode .trip-card-footer {
   border-top-color: var(--border);
 }
@@ -499,6 +506,14 @@ body {
   background: #7a5285;
   border-color: #7a5285;
   transform: translateY(-1px);
+}
+
+.nav-user-button {
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  border-radius: 999px;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.28);
 }
 
 /* Hamburger button (hidden on desktop) */
@@ -3361,6 +3376,12 @@ body {
   box-shadow: none !important;
 }
 
+.trips-create-btn:disabled,
+.trips-name-input:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
 .trips-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -3454,10 +3475,59 @@ body {
 .trip-dest-row {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 0.6rem;
   padding: 0.4rem 0.5rem;
   border-radius: 8px;
   background: #faf7fc;
+}
+
+.trip-stop-fields {
+  flex: 1 0 calc(100% - 50px);
+  margin-left: 50px;
+  display: flex;
+  gap: 0.55rem;
+  align-items: flex-end;
+}
+
+.trip-stop-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.trip-stop-field input,
+.trip-stop-field select {
+  height: 32px;
+  border: 1px solid #ded5e8;
+  border-radius: 7px;
+  background: white;
+  color: var(--text-primary);
+  font: 500 0.78rem 'Inter', sans-serif;
+  padding: 0 0.55rem;
+  outline: none;
+}
+
+.trip-stop-field input {
+  width: 64px;
+}
+
+.trip-stop-area-field {
+  flex: 1;
+}
+
+.trip-stop-area-field select {
+  width: 100%;
+}
+
+.trip-stop-field input:focus,
+.trip-stop-field select:focus {
+  border-color: var(--purple);
 }
 
 .trip-dest-img {

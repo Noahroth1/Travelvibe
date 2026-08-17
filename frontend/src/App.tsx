@@ -1,10 +1,32 @@
 import { useState, useEffect, useRef } from 'react'
+import { Show, SignInButton, SignUpButton, UserButton, useAuth } from '@clerk/react'
 import './App.css'
 
 const apiBase = import.meta.env.VITE_API_URL ?? ''
 
 type Region = 'All' | 'Europe' | 'Asia' | 'Americas' | 'Middle East' | 'Oceania' | 'Africa'
-type Trip = { id: string; name: string; destinations: string[]; createdAt: number; travelDate?: string }
+type TripStop = { destination: string; days: number; neighbourhood?: string }
+type Trip = { id: string; name: string; destinations: TripStop[]; createdAt: number; travelDate?: string; remote?: boolean }
+type ApiTrip = { id: number; name: string; destinations: (TripStop | string)[]; created_at: string; travel_date: string | null }
+type AccountState = {
+  saved_order: string[]
+  notes: Record<string, string>
+  been_there: string[]
+  recently_viewed: string[]
+  dark_mode: boolean
+  layout_mode: 'grid' | 'list'
+  initialized: boolean
+}
+
+function normalizeTripStops(stops: (TripStop | string)[] | undefined): TripStop[] {
+  return (stops ?? []).map(stop => typeof stop === 'string'
+    ? { destination: stop, days: 1 }
+    : { destination: stop.destination, days: Math.max(1, stop.days || 1), neighbourhood: stop.neighbourhood || undefined })
+}
+
+function normalizeStoredTrips(trips: Trip[]): Trip[] {
+  return trips.map(trip => ({ ...trip, destinations: normalizeTripStops(trip.destinations) }))
+}
 
 type City = { name: string; country: string }
 
@@ -409,11 +431,15 @@ function DestinationCard({
 }
 
 function App() {
+  const { isLoaded: authLoaded, isSignedIn, userId, getToken } = useAuth()
   const [search, setSearch] = useState("")
   const [scrolled, setScrolled] = useState(false)
   const [scrollProgress, setScrollProgress] = useState(0)
   const [menuOpen, setMenuOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [destinationsLoading, setDestinationsLoading] = useState(true)
+  const [destinationsError, setDestinationsError] = useState(false)
+  const [destinationsRetry, setDestinationsRetry] = useState(0)
   const [saved, setSaved] = useState<Set<string>>(() => {
     try { return new Set(JSON.parse(localStorage.getItem('tv-saved-order') ?? '[]') as string[]) } catch { return new Set() }
   })
@@ -447,9 +473,11 @@ function App() {
   const [newsletterEmail, setNewsletterEmail] = useState('')
   const [newsletterDone, setNewsletterDone] = useState(() => !!localStorage.getItem('tv-newsletter'))
   const [trips, setTrips] = useState<Trip[]>(() => {
-    try { return JSON.parse(localStorage.getItem('tv-trips') ?? '[]') } catch { return [] }
+    try { return normalizeStoredTrips(JSON.parse(localStorage.getItem('tv-trips') ?? '[]')) } catch { return [] }
   })
   const [newTripName, setNewTripName] = useState('')
+  const [tripSaving, setTripSaving] = useState(false)
+  const [accountStateReady, setAccountStateReady] = useState(false)
   const [addToTripOpen, setAddToTripOpen] = useState<string | null>(null)
   const [affordableFilter, setAffordableFilter] = useState<Region>('All')
   const [exploreSearch, setExploreSearch] = useState('')
@@ -476,11 +504,17 @@ function App() {
   const modalRef = useRef<HTMLDivElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const newTripIdRef = useRef<string | null>(null)
+  const sharedUrlLoadedRef = useRef(false)
+  const tripsLoadedForUserRef = useRef<string | null>(null)
+  const legacyTripsRef = useRef<Trip[]>(trips)
+  const accountStateLoadedForUserRef = useRef<string | null>(null)
   // Connection to backend destinations
   const [featuredDestinations, setFeaturedDestinations] = useState<Destination[]>([])
   const [affordableDestinations, setAffordableDestinations] = useState<Destination[]>([])
 
   useEffect(() => {
+    setDestinationsLoading(true)
+    setDestinationsError(false)
     fetch(`${apiBase}/api/destinations`)
       .then((res) => {
         if (!res.ok) {
@@ -510,11 +544,14 @@ function App() {
             destination => destination.budget_level === '$'
           )
         )
+        setDestinationsLoading(false)
       })
       .catch((error) => {
         console.error('Destination error:', error)
+        setDestinationsLoading(false)
+        setDestinationsError(true)
       })
-  }, [])
+  }, [destinationsRetry])
 
     const regionCounts = regions.reduce((acc, region) => {
       acc[region] =
@@ -572,7 +609,7 @@ function App() {
     )
     elements.forEach(el => observer.observe(el))
     return () => observer.disconnect()
-  }, [activeFilter, saved, results, noResults])
+  }, [activeFilter, authLoaded, isSignedIn, noResults, results, saved, trips.length])
 
   // Stagger-reveal containers
   useEffect(() => {
@@ -641,8 +678,10 @@ function App() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // Open destination or restore shared shortlist from URL on load
+  // Open a destination or restore a shared shortlist after API data arrives.
   useEffect(() => {
+    if (featuredDestinations.length === 0 || sharedUrlLoadedRef.current) return
+    sharedUrlLoadedRef.current = true
     const params = new URLSearchParams(window.location.search)
     const slug = params.get('dest')
     const savedParam = params.get('saved')
@@ -659,8 +698,7 @@ function App() {
         setToast({ message: `Shortlist loaded — ${names.length} destination${names.length > 1 ? 's' : ''}`, id: Date.now() })
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [featuredDestinations])
 
   // Auto-focus search on desktop
   useEffect(() => {
@@ -774,8 +812,174 @@ function App() {
     }
   }
 
+  function fromApiTrip(trip: ApiTrip): Trip {
+    return {
+      id: String(trip.id),
+      name: trip.name,
+      destinations: normalizeTripStops(trip.destinations),
+      createdAt: new Date(trip.created_at).getTime(),
+      travelDate: trip.travel_date ?? undefined,
+      remote: true,
+    }
+  }
+
+  async function authenticatedFetch(path: string, init?: RequestInit) {
+    const token = await getToken()
+    if (!token) throw new Error('Not authenticated')
+    return fetch(`${apiBase}${path}`, {
+      ...init,
+      headers: {
+        ...init?.headers,
+        Authorization: `Bearer ${token}`,
+      },
+    })
+  }
+
   useEffect(() => {
-    localStorage.setItem('tv-trips', JSON.stringify(trips))
+    if (!authLoaded) return
+    if (!isSignedIn || !userId) {
+      accountStateLoadedForUserRef.current = null
+      setAccountStateReady(false)
+      if (localStorage.getItem('tv-account-migrated') === '1') {
+        setSavedOrder([])
+        setSaved(new Set())
+        setDestNotes({})
+        setBeenThere(new Set())
+        setRecentlyViewed([])
+      }
+      return
+    }
+    if (accountStateLoadedForUserRef.current === userId) return
+    accountStateLoadedForUserRef.current = userId
+    setAccountStateReady(false)
+
+    const shouldMigrateLegacyState = localStorage.getItem('tv-account-migrated') !== '1'
+    const localState = {
+      saved_order: shouldMigrateLegacyState ? savedOrder : [],
+      notes: shouldMigrateLegacyState ? destNotes : {},
+      been_there: shouldMigrateLegacyState ? [...beenThere] : [],
+      recently_viewed: shouldMigrateLegacyState ? recentlyViewed : [],
+      dark_mode: darkMode,
+      layout_mode: layoutMode,
+    }
+
+    getToken()
+      .then(token => {
+        if (!token) throw new Error('Not authenticated')
+        return fetch(`${apiBase}/api/me/state`, { headers: { Authorization: `Bearer ${token}` } })
+      })
+      .then(async response => {
+        if (!response.ok) throw new Error(`Failed to load account state: ${response.status}`)
+        const remote = await response.json() as AccountState
+        if (!remote.initialized) {
+          const token = await getToken()
+          if (!token) throw new Error('Not authenticated')
+          const migrated = await fetch(`${apiBase}/api/me/state`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+            body: JSON.stringify(localState),
+          })
+          if (!migrated.ok) throw new Error(`Failed to migrate account state: ${migrated.status}`)
+          localStorage.setItem('tv-account-migrated', '1')
+          setToast({ message: 'Your saved travel data is now synced', id: Date.now() })
+          return
+        }
+
+        localStorage.setItem('tv-account-migrated', '1')
+        setSavedOrder(remote.saved_order)
+        setSaved(new Set(remote.saved_order))
+        setDestNotes(remote.notes)
+        setBeenThere(new Set(remote.been_there))
+        setRecentlyViewed(remote.recently_viewed)
+        setDarkMode(remote.dark_mode)
+        setLayoutMode(remote.layout_mode)
+      })
+      .catch(error => console.warn('Using local account state:', error))
+      .finally(() => setAccountStateReady(true))
+  // Capture browser state once when each user signs in, before server hydration.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authLoaded, getToken, isSignedIn, userId])
+
+  useEffect(() => {
+    if (!accountStateReady || !isSignedIn || !userId) return
+    const timer = setTimeout(() => {
+      void authenticatedFetch('/api/me/state', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          saved_order: savedOrder,
+          notes: destNotes,
+          been_there: [...beenThere],
+          recently_viewed: recentlyViewed,
+          dark_mode: darkMode,
+          layout_mode: layoutMode,
+        }),
+      }).then(response => {
+        if (!response.ok) throw new Error(`Failed to sync account state: ${response.status}`)
+      }).catch(error => console.warn('Account state sync deferred:', error))
+    }, 500)
+    return () => clearTimeout(timer)
+  // authenticatedFetch is component-local; listed state fields intentionally drive syncing.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accountStateReady, beenThere, darkMode, destNotes, isSignedIn, layoutMode, recentlyViewed, savedOrder, userId])
+
+  useEffect(() => {
+    if (!authLoaded) return
+    if (!isSignedIn || !userId) {
+      tripsLoadedForUserRef.current = null
+      setTrips([])
+      return
+    }
+    if (tripsLoadedForUserRef.current === userId) return
+    tripsLoadedForUserRef.current = userId
+
+    const cachedTrips = (() => {
+      try { return normalizeStoredTrips(JSON.parse(localStorage.getItem(`tv-trips:${userId}`) ?? '[]') as Trip[]) }
+      catch { return [] }
+    })()
+    const localTrips = cachedTrips.length > 0 ? cachedTrips : legacyTripsRef.current
+
+    getToken().then(token => {
+      if (!token) throw new Error('Not authenticated')
+      return fetch(`${apiBase}/api/trips`, { headers: { Authorization: `Bearer ${token}` } })
+    })
+      .then(res => {
+        if (!res.ok) throw new Error(`Failed to load trips: ${res.status}`)
+        return res.json() as Promise<ApiTrip[]>
+      })
+      .then(async remoteTrips => {
+        if (remoteTrips.length > 0 || localTrips.length === 0) {
+          setTrips(remoteTrips.map(fromApiTrip))
+          return
+        }
+
+        // One-time migration for trips created before backend syncing existed.
+        const token = await getToken()
+        if (!token) throw new Error('Not authenticated')
+        const migrated = await Promise.all(localTrips.map(async trip => {
+          const res = await fetch(`${apiBase}/api/trips`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+            body: JSON.stringify({
+              name: trip.name,
+              travel_date: trip.travelDate ?? null,
+              destinations: trip.destinations,
+            }),
+          })
+          if (!res.ok) throw new Error(`Failed to migrate trip: ${res.status}`)
+          return fromApiTrip(await res.json() as ApiTrip)
+        }))
+        setTrips(migrated)
+        setToast({ message: `${migrated.length} local trip${migrated.length === 1 ? '' : 's'} synced`, id: Date.now() })
+      })
+      .catch(error => {
+        console.warn('Using locally stored trips:', error)
+        setTrips(localTrips)
+      })
+  }, [authLoaded, getToken, isSignedIn, userId])
+
+  useEffect(() => {
+    if (isSignedIn && userId) localStorage.setItem(`tv-trips:${userId}`, JSON.stringify(trips))
     if (newTripIdRef.current) {
       const el = document.getElementById(`trip-${newTripIdRef.current}`)
       if (el) {
@@ -783,45 +987,107 @@ function App() {
         newTripIdRef.current = null
       }
     }
-  }, [trips])
+  }, [isSignedIn, trips, userId])
 
-  function createTrip() {
+  async function createTrip() {
     const name = newTripName.trim()
-    if (!name) return
-    const id = Date.now().toString()
+    if (!name) {
+      setToast({ message: 'Give your trip a name first', id: Date.now() })
+      return
+    }
+    if (!isSignedIn) {
+      setToast({ message: 'Sign in to create a trip', id: Date.now() })
+      return
+    }
+    if (tripSaving) return
+    setTripSaving(true)
+    let nextTrip: Trip = { id: Date.now().toString(), name, destinations: [], createdAt: Date.now() }
+    try {
+      const res = await authenticatedFetch('/api/trips', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, destinations: [] }),
+      })
+      if (!res.ok) throw new Error(`Failed to create trip: ${res.status}`)
+      nextTrip = fromApiTrip(await res.json() as ApiTrip)
+    } catch (error) {
+      console.warn('Trip saved locally:', error)
+      setToast({ message: 'Backend unavailable — trip saved on this device', id: Date.now() })
+    } finally {
+      setTripSaving(false)
+    }
+    const id = nextTrip.id
     newTripIdRef.current = id
-    setTrips(prev => [...prev, { id, name, destinations: [], createdAt: Date.now() }])
+    setTrips(prev => [...prev, nextTrip])
     setNewTripName('')
   }
 
-  function deleteTrip(id: string) {
+  async function deleteTrip(id: string) {
+    const trip = trips.find(item => item.id === id)
     setTrips(prev => prev.filter(t => t.id !== id))
+    if (trip?.remote) {
+      try {
+        const res = await authenticatedFetch(`/api/trips/${id}`, { method: 'DELETE' })
+        if (!res.ok) throw new Error(`Failed to delete trip: ${res.status}`)
+      } catch (error) {
+        setTrips(prev => [...prev, trip])
+        setToast({ message: 'Could not delete trip — please try again', id: Date.now() })
+        console.error(error)
+      }
+    }
+  }
+
+  async function updateRemoteTrip(trip: Trip, changes: Partial<Pick<Trip, 'travelDate' | 'destinations'>>) {
+    if (!trip.remote) return
+    try {
+      const res = await authenticatedFetch(`/api/trips/${trip.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...(changes.travelDate !== undefined ? { travel_date: changes.travelDate || null } : {}),
+          ...(changes.destinations !== undefined ? { destinations: changes.destinations } : {}),
+        }),
+      })
+      if (!res.ok) throw new Error(`Failed to update trip: ${res.status}`)
+    } catch (error) {
+      console.error(error)
+      setToast({ message: 'Trip changed locally; server sync failed', id: Date.now() })
+    }
   }
 
   function addDestToTrip(tripId: string, destName: string) {
     const trip = trips.find(t => t.id === tripId)
-    if (trip?.destinations.includes(destName)) { setAddToTripOpen(null); return }
+    if (trip?.destinations.some(stop => stop.destination === destName)) { setAddToTripOpen(null); return }
+    const destinations = [...(trip?.destinations ?? []), { destination: destName, days: 1 }]
     setTrips(prev => prev.map(t =>
-      t.id === tripId ? { ...t, destinations: [...t.destinations, destName] } : t
+      t.id === tripId ? { ...t, destinations } : t
     ))
+    if (trip) void updateRemoteTrip(trip, { destinations })
     setAddToTripOpen(null)
     setToast({ message: `Added to trip ✓`, id: Date.now() })
   }
 
   function removeDestFromTrip(tripId: string, destName: string) {
+    const trip = trips.find(t => t.id === tripId)
+    const destinations = (trip?.destinations ?? []).filter(stop => stop.destination !== destName)
     setTrips(prev => prev.map(t =>
-      t.id === tripId ? { ...t, destinations: t.destinations.filter(n => n !== destName) } : t
+      t.id === tripId ? { ...t, destinations } : t
     ))
+    if (trip) void updateRemoteTrip(trip, { destinations })
   }
 
-  function tripTotalDays(destNames: string[]): number {
-    return destNames.reduce((sum, name) => {
-      const range = allDestinations.find(destination => destination.name === name)?.visit_duration ?? ''
-      const match = range.match(/(\d+)[–\-](\d+)/)
-      if (match) return sum + Math.round((parseInt(match[1]) + parseInt(match[2])) / 2)
-      const single = range.match(/(\d+)/)
-      return sum + (single ? parseInt(single[1]) : 0)
-    }, 0)
+  function updateTripStop(tripId: string, destinationName: string, changes: Partial<TripStop>) {
+    const trip = trips.find(item => item.id === tripId)
+    if (!trip) return
+    const destinations = trip.destinations.map(stop =>
+      stop.destination === destinationName ? { ...stop, ...changes } : stop
+    )
+    setTrips(prev => prev.map(item => item.id === tripId ? { ...item, destinations } : item))
+    void updateRemoteTrip(trip, { destinations })
+  }
+
+  function tripTotalDays(stops: TripStop[]): number {
+    return stops.reduce((sum, stop) => sum + stop.days, 0)
   }
 
   function clearSearch() {
@@ -850,7 +1116,8 @@ function App() {
   function toggleBeenThere(name: string) {
     setBeenThere(prev => {
       const next = new Set(prev)
-      next.has(name) ? next.delete(name) : next.add(name)
+      if (next.has(name)) next.delete(name)
+      else next.add(name)
       return next
     })
   }
@@ -878,7 +1145,8 @@ function App() {
     const adding = !saved.has(name)
     setSaved(prev => {
       const next = new Set(prev)
-      adding ? next.add(name) : next.delete(name)
+      if (adding) next.add(name)
+      else next.delete(name)
       return next
     })
     setSavedOrder(o => adding ? (o.includes(name) ? o : [...o, name]) : o.filter(n => n !== name))
@@ -1022,7 +1290,7 @@ function App() {
                             <div className="add-to-trip-menu">
                               {trips.map(t => (
                                 <button key={t.id} className="add-to-trip-option" onClick={() => addDestToTrip(t.id, dest.name)}>
-                                  {t.destinations.includes(dest.name) ? '✓ ' : ''}{t.name}
+                                  {t.destinations.some(stop => stop.destination === dest.name) ? '✓ ' : ''}{t.name}
                                 </button>
                               ))}
                             </div>
@@ -1330,6 +1598,19 @@ function App() {
           <button className="nav-saved-btn" onClick={() => { document.getElementById('trips')?.scrollIntoView({ behavior: 'smooth' }); setMenuOpen(false) }}>
             ✈ Trips {trips.length > 0 && <span className="nav-badge">{trips.length}</span>}
           </button>
+          <Show when="signed-out">
+            <SignInButton mode="modal">
+              <button className="auth-btn auth-btn--ghost">Sign in</button>
+            </SignInButton>
+            <SignUpButton mode="modal">
+              <button className="auth-btn auth-btn--solid">Join</button>
+            </SignUpButton>
+          </Show>
+          <Show when="signed-in">
+            <div className="nav-user-button">
+              <UserButton />
+            </div>
+          </Show>
           <button className="dark-toggle" onClick={() => setDarkMode(d => !d)} aria-label="Toggle dark mode">
             {darkMode ? '☀' : '☽'}
           </button>
@@ -1537,7 +1818,20 @@ function App() {
           ))}
         </div>
 
-        {filteredDestinations.length === 0 ? (
+        {destinationsLoading ? (
+          <div className="cards-grid" aria-label="Loading destinations">
+            {[...Array(6)].map((_, i) => <SkeletonCard key={i} />)}
+          </div>
+        ) : destinationsError ? (
+          <div className="region-empty destination-error" role="alert">
+            <p className="region-empty-label">Connection problem</p>
+            <h3>We couldn't load the destination guides</h3>
+            <p>Make sure the API and database are running, then try again.</p>
+            <button className="region-empty-reset" onClick={() => setDestinationsRetry(value => value + 1)}>
+              Try again
+            </button>
+          </div>
+        ) : filteredDestinations.length === 0 ? (
           <div className="region-empty section-fade">
             <p className="region-empty-label">{activeFilter}</p>
             <h3>No destinations here yet</h3>
@@ -1609,18 +1903,36 @@ function App() {
       <section id="trips" className="trips-section">
         <AnimatedHeading>My Trips</AnimatedHeading>
         <p className="section-subtitle section-fade">Plan your itinerary — add any destination, set your dates, see your total trip length</p>
-        <div className="trips-create section-fade">
+        {!authLoaded ? (
+          <div className="trips-empty section-fade">
+            <div className="trips-empty-inner"><p>Checking your account…</p></div>
+          </div>
+        ) : !isSignedIn ? (
+          <div className="trips-empty section-fade">
+            <div className="trips-empty-inner">
+              <h3>Sign in to plan your trips</h3>
+              <p>Your trips will be private and available on every device.</p>
+              <SignInButton mode="modal">
+                <button className="trips-create-btn">Sign in to continue</button>
+              </SignInButton>
+            </div>
+          </div>
+        ) : (
+          <>
+        <form className="trips-create section-fade" onSubmit={e => { e.preventDefault(); void createTrip() }}>
           <input
             className="trips-name-input"
             type="text"
             placeholder="Name your trip — e.g. Summer Europe 2025"
             value={newTripName}
             onChange={e => setNewTripName(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && createTrip()}
             maxLength={50}
+            disabled={tripSaving}
           />
-          <button className="trips-create-btn" onClick={createTrip}>Create Trip</button>
-        </div>
+          <button className="trips-create-btn" type="submit" disabled={tripSaving}>
+            {tripSaving ? 'Creating…' : 'Create Trip'}
+          </button>
+        </form>
         {trips.length === 0 ? (
           <div className="trips-empty section-fade">
             <div className="trips-empty-inner">
@@ -1632,11 +1944,14 @@ function App() {
         ) : (
           <div className="trips-grid section-fade">
             {trips.map(trip => {
-              const tripDests = trip.destinations.map(n => allDestinations.find(d => d.name === n)).filter((d): d is Destination => !!d)
+              const tripDests = trip.destinations.map(stop => ({
+                stop,
+                destination: allDestinations.find(d => d.name === stop.destination),
+              })).filter((item): item is { stop: TripStop; destination: Destination } => !!item.destination)
               const totalDays = tripTotalDays(trip.destinations)
               const searchResults = tripSearchOpen === trip.id && tripSearchQuery.trim()
                 ? allDestinations.filter(d =>
-                    !trip.destinations.includes(d.name) &&
+                    !trip.destinations.some(stop => stop.destination === d.name) &&
                     (d.name.toLowerCase().includes(tripSearchQuery.toLowerCase()) || d.country.toLowerCase().includes(tripSearchQuery.toLowerCase()))
                   ).slice(0, 6)
                 : []
@@ -1651,6 +1966,7 @@ function App() {
                         placeholder="When? e.g. August 2025"
                         value={trip.travelDate ?? ''}
                         onChange={(e) => setTrips(prev => prev.map(t => t.id === trip.id ? { ...t, travelDate: e.target.value } : t))}
+                        onBlur={(e) => void updateRemoteTrip(trip, { travelDate: e.target.value })}
                       />
                     </div>
                     <button className="trip-delete-btn" onClick={() => deleteTrip(trip.id)} aria-label="Delete trip">✕</button>
@@ -1660,7 +1976,7 @@ function App() {
                     <p className="trip-empty-hint">Search below to add your first destination</p>
                   ) : (
                     <div className="trip-dest-list">
-                      {tripDests.map(d => (
+                      {tripDests.map(({ destination: d, stop }) => (
                         <div key={d.name} className="trip-dest-row">
                           <img
                             src={`${d.image.split('?')[0]}?w=60&h=40&fit=crop`}
@@ -1672,9 +1988,36 @@ function App() {
                           <div className="trip-dest-info" onClick={() => viewDest(d)} style={{ cursor: 'pointer' }}>
                             <span className="trip-dest-name">{d.name}</span>
                             <span className="trip-dest-country">{d.country}</span>
-                            {d.visit_duration && (
-                              <span className="trip-dest-duration">{d.visit_duration}</span>
-                            )}
+                          </div>
+                          <div className="trip-stop-fields">
+                            <label className="trip-stop-field">
+                              <span>Days</span>
+                              <input
+                                type="number"
+                                min="1"
+                                max="60"
+                                value={stop.days}
+                                onChange={event => updateTripStop(trip.id, d.name, {
+                                  days: Math.min(60, Math.max(1, Number(event.target.value) || 1)),
+                                })}
+                              />
+                            </label>
+                            <label className="trip-stop-field trip-stop-area-field">
+                              <span>Area</span>
+                              <select
+                                value={stop.neighbourhood ?? ''}
+                                onChange={event => updateTripStop(trip.id, d.name, {
+                                  neighbourhood: event.target.value || undefined,
+                                })}
+                              >
+                                <option value="">Choose an area</option>
+                                {d.neighbourhoods.map(neighbourhood => (
+                                  <option key={neighbourhood.name} value={neighbourhood.name}>
+                                    {neighbourhood.name}
+                                  </option>
+                                ))}
+                              </select>
+                            </label>
                           </div>
                           <button className="trip-dest-remove" onClick={() => removeDestFromTrip(trip.id, d.name)} aria-label="Remove">✕</button>
                         </div>
@@ -1721,6 +2064,8 @@ function App() {
               )
             })}
           </div>
+        )}
+          </>
         )}
       </section>
 

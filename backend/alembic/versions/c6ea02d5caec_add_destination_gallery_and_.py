@@ -1,7 +1,7 @@
 """add destination gallery and neighbourhoods
 
 Revision ID: c6ea02d5caec
-Revises: 
+Revises: b01d8b4f27a0
 Create Date: 2026-07-12 18:22:33.075666
 
 """
@@ -13,7 +13,7 @@ from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
 revision: str = 'c6ea02d5caec'
-down_revision: Union[str, Sequence[str], None] = None
+down_revision: Union[str, Sequence[str], None] = 'b01d8b4f27a0'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

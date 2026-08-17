@@ -25,6 +25,7 @@ htmlcov/
 .env.local
 .env.*.local
 backend/.env
+backend/.env.clerk
 frontend/.env
 
 # Builds & bundles
@@ -64,3 +65,4 @@ Desktop.ini
 *.yaml
 !docker-compose.yml
 !docker-compose.yaml
+!render.yaml
