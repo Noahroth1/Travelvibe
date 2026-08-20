@@ -1800,7 +1800,11 @@ function App() {
             >
               {region}
               <span className="filter-count" key={`${region}-${activeFilter}`}>
-                {region === 'All' ? featuredDestinations.length : regionCounts[region]}
+                {destinationsLoading
+                  ? 'Loading…'
+                  : region === 'All'
+                    ? featuredDestinations.length
+                    : regionCounts[region]}
               </span>
             </button>
           ))}
@@ -1878,7 +1882,7 @@ function App() {
                 onClick={() => setAffordableFilter(region)}
               >
                 {region}
-                <span className="filter-count">{count}</span>
+                <span className="filter-count">{destinationsLoading ? 'Loading…' : count}</span>
               </button>
             )
           })}
