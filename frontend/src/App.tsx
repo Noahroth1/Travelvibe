@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Show, SignInButton, SignUpButton, UserButton, useAuth } from '@clerk/react'
 import './App.css'
+import bundledDestinations from './data/destinations.json'
 
 const apiBase = import.meta.env.VITE_API_URL ?? ''
 
@@ -46,6 +47,23 @@ type Destination = {
   neighbourhoods: Neighbourhood[]
   gallery: string[]
 }
+
+function normalizeDestinations(destinations: Destination[]): Destination[] {
+  return destinations.map(destination => ({
+    ...destination,
+    best_time: destination.best_time ?? null,
+    visit_duration: destination.visit_duration ?? null,
+    budget_level: destination.budget_level ?? null,
+    vibes: destination.vibes ?? [],
+    neighbourhoods: (destination.neighbourhoods ?? []).map(neighbourhood => ({
+      ...neighbourhood,
+      tips: neighbourhood.tips ?? [],
+    })),
+    gallery: destination.gallery ?? [],
+  }))
+}
+
+const fallbackDestinations = normalizeDestinations(bundledDestinations as Destination[])
 
 const heroSlides = [
   "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=1920&h=1080&fit=crop",
@@ -437,7 +455,7 @@ function App() {
   const [scrollProgress, setScrollProgress] = useState(0)
   const [menuOpen, setMenuOpen] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [destinationsLoading, setDestinationsLoading] = useState(true)
+  const [destinationsLoading, setDestinationsLoading] = useState(false)
   const [destinationsError, setDestinationsError] = useState(false)
   const [destinationsRetry, setDestinationsRetry] = useState(0)
   const [saved, setSaved] = useState<Set<string>>(() => {
@@ -509,11 +527,12 @@ function App() {
   const legacyTripsRef = useRef<Trip[]>(trips)
   const accountStateLoadedForUserRef = useRef<string | null>(null)
   // Connection to backend destinations
-  const [featuredDestinations, setFeaturedDestinations] = useState<Destination[]>([])
-  const [affordableDestinations, setAffordableDestinations] = useState<Destination[]>([])
+  const [featuredDestinations, setFeaturedDestinations] = useState<Destination[]>(fallbackDestinations)
+  const [affordableDestinations, setAffordableDestinations] = useState<Destination[]>(
+    fallbackDestinations.filter(destination => destination.budget_level === '$')
+  )
 
   useEffect(() => {
-    setDestinationsLoading(true)
     setDestinationsError(false)
     fetch(`${apiBase}/api/destinations`)
       .then((res) => {
@@ -524,18 +543,7 @@ function App() {
         return res.json()
       })
       .then((data: Destination[]) => {
-        const normalizedData = data.map((destination) => ({
-          ...destination,
-          best_time: destination.best_time ?? null,
-          visit_duration: destination.visit_duration ?? null,
-          budget_level: destination.budget_level ?? null,
-          vibes: destination.vibes ?? [],
-          neighbourhoods: (destination.neighbourhoods ?? []).map(neighbourhood => ({
-            ...neighbourhood,
-            tips: neighbourhood.tips ?? [],
-          })),
-          gallery: destination.gallery ?? [],
-        }))
+        const normalizedData = normalizeDestinations(data)
 
         setFeaturedDestinations(normalizedData)
 
@@ -547,9 +555,9 @@ function App() {
         setDestinationsLoading(false)
       })
       .catch((error) => {
-        console.error('Destination error:', error)
+        console.warn('Using bundled destinations because the API is unavailable:', error)
         setDestinationsLoading(false)
-        setDestinationsError(true)
+        setDestinationsError(false)
       })
   }, [destinationsRetry])
 
